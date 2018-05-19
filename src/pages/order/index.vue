@@ -9,7 +9,7 @@
               <span class="name">收款人： {{mr_ad.name}}</span>
               <span class="phone">手机号： {{mr_ad.phone}}</span>
             </div>
-            <div class="add">收货地址： {{mr_ad.adress}}</div>
+            <div class="add">收货地址：  {{mr_ad.three}}{{mr_ad.adress}}</div>
           </div>
         </div>
         <div class="btn">

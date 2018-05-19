@@ -69,7 +69,6 @@ export default {
     return {
       goodsDetail: {},
       goodsId: "",
-      sessionIsOk: false
     };
   },
 
@@ -93,11 +92,11 @@ export default {
         }
       });
     },
-    notfx(){
+    notfx() {
       wx.showModal({
-        title:'提示',
-        content:'请先成为分销商'
-      })
+        title: "提示",
+        content: "请先成为分销商"
+      });
     },
     buy() {
       var _this = this;
@@ -110,7 +109,7 @@ export default {
             // id可用
             var url = "../order/main" + "?id=" + _this.goodsId;
             wx.navigateTo({ url });
-          } else if(_this.sessionIsOk == 0){
+          } else if (_this.sessionIsOk == 0) {
             // id不存在
             // 跳转登录
             wx.showModal({
@@ -144,6 +143,7 @@ export default {
   onShareAppMessage() {
     const _this = this;
     return {
+      path: "../fenxiao/main?fid=" + this.sessionId,
       title: _this.goodsDetail.product_name
     };
   },
@@ -163,10 +163,14 @@ export default {
   onShow() {
     // 清空pre_goodsId
     this.CLEAR_PREGOODSID_SYNC();
+    // 判断不是分销商不显示转发按钮
+    if (!this.ifFenxiaoshang) {
+      wx.hideShareMenu();
+    }
   },
   computed: {
     ...mapState(["sessionId", "userInfo"]),
-    ...mapGetters(['ifFenxiaoshang'])
+    ...mapGetters(["ifFenxiaoshang"])
   }
 };
 </script>

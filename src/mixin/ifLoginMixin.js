@@ -40,7 +40,7 @@ export default {
   },
   computed: {
     ...mapState(["sessionId", "userInfo", "userDetail"]),
-
+    ...mapGetters(["ifFenxiaoshang"])
   },
   onShow() {
     //   判断缓存中是否存在sessionId，如果不存在就重新登录;如果存在判断sessionId是否可用，可用不进行操作，不可用就重新登录
@@ -59,7 +59,7 @@ export default {
           wx.showModal({
             title: "提示",
             content: "授权已过期，请重新登录",
-            success: res => {},
+            showCancel:false,
             complete: res => {
               _this.CLEAR_USERINFO_SYNC();
               _this.CLEAR_SESSIONID_SYNC();
@@ -78,7 +78,7 @@ export default {
       wx.showModal({
         title: "提示",
         content: "请登录",
-        success: res => {},
+        showCancel:false,        
         complete: res => {
           _this.CLEAR_USERINFO_SYNC();
           _this.CLEAR_SESSIONID_SYNC();

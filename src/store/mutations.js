@@ -27,7 +27,14 @@ const mutations = {
     CLEAR_USERDETAIL_SYNC(state,preload){
         state.userDetail = '';
     },
-    
+
+    SAVE_FID_SYNC(state,preload){
+        state.fid = preload;
+    },
+    CLEAR_FID_SYNC(state,preload){
+        state.fid = '';
+    },
+
     // 设置sessionIsOk
     SET_SESSIONISOK_SYNC(state,preload){
         state.sessionIsOk = preload;

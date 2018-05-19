@@ -13,7 +13,7 @@
 <script>
 import goods from "@/components/index-goods/goods";
 import ifLoginMixin from '@/mixin/ifLoginMixin';
-import mymixin from '@/mixin/mymixin';
+// import mymixin from '@/mixin/mymixin';
 
 export default {
   data() {
@@ -56,7 +56,7 @@ export default {
       }
     });
   },
-  mixins: [ifLoginMixin,mymixin],
+  mixins: [ifLoginMixin],
   onShow() {
     
   },

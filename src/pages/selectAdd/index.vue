@@ -8,7 +8,7 @@
             <span>{{item.phone}}</span>
           </div>
           <div class="info2">
-            收货地址：{{item.adress}}
+            收货地址：{{item.three}}{{item.adress}}
           </div>
         </div>
         <div class="handle">

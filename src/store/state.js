@@ -3,5 +3,6 @@ const state = {
     userInfo:{},
     userDetail:{},
     pre_goodsId:'',
+    fid:''
 }
 export default state;

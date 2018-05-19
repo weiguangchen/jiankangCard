@@ -57,15 +57,17 @@ export default {
           console.log(res);
           _this.username = res.data[0].name;
           _this.phone = res.data[0].phone;
+          _this.region = res.data[0].three;
           _this.address = res.data[0].adress;
         }
       });
     }
   },
   onUnload() {
-    this.username = '';
-    this.phone = '';
-    this.address = '';
+    this.username = "";
+    this.phone = "";
+    this.region = [];
+    this.address = "";
   },
   components: {},
   methods: {
@@ -124,7 +126,9 @@ export default {
             id: _this.addressId,
             name: _this.username,
             phone: _this.phone,
-            adress: _this.region + " " + _this.address
+            three:
+              _this.region[0] + "," + _this.region[1] + "," + _this.region[2],
+            adress: _this.address
           },
           success: res => {
             console.log(res);
@@ -141,10 +145,11 @@ export default {
             id: _this.sessionId,
             name: _this.username,
             phone: _this.phone,
-            adress: _this.region + " " + _this.address
+            three: _this.region[0] + "," + _this.region[1] + "," + _this.region[2],
+            adress: _this.address
           },
           success: res => {
-            //   console.log(res);
+            console.log(res);
             // 判断用户是否有地址信息
             wx.request({
               url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/get_adress",
@@ -155,9 +160,9 @@ export default {
                 console.log(res);
                 if (res.data.length > 1) {
                   //   多于一条
-                  wx.navigateBack({
-                    delta: 1
-                  });
+                  //   wx.navigateBack({
+                  //     delta: 1
+                  //   });
                 } else {
                   //   没有地址
                   // 设置为默认地址
@@ -171,9 +176,9 @@ export default {
                     success: res => {
                       console.log(res);
 
-                      wx.navigateBack({
-                        delta: 1
-                      });
+                      //   wx.navigateBack({
+                      //     delta: 1
+                      //   });
                     }
                   });
                 }

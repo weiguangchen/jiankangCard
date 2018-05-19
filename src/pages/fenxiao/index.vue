@@ -35,19 +35,23 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import mymixin from "@/mixin/mymixin";
+import ifLoginMixin from "@/mixin/ifLoginMixin";
 
 export default {
   data() {
     return {};
   },
 
-  components: {},
-  computed: {
-    ...mapState(["sessionId", "userInfo"]),
-    ...mapGetters(["ifFenxiaoshang"])
+  onShow() {
+    var scene = this.$root.$mp.appOptions.scene;
+    console.log(scene);
+    wx.showModal({
+      title: "场景值",
+      content: scene
+    });
+    
   },
+  computed: {},
   methods: {
     buy() {
       var url = "../detail/main?id=3";
@@ -58,7 +62,7 @@ export default {
     const _this = this;
     return {};
   },
-  mixins: [mymixin]
+  mixins: [ifLoginMixin]
 };
 </script>
 
