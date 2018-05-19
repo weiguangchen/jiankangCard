@@ -1,0 +1,22 @@
+.app-bg{
+  background: #eeeeee;
+}
+
+
+/* 公用字体 */
+%fontsize{
+  font-size: 18px;
+  color: #3a3a3a;
+}
+/* 下边距 */
+$bot:10px;
+
+// 背景占满全屏
+page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.app-bg {
+  flex: 1;
+}
