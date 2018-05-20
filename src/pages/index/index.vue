@@ -46,6 +46,7 @@ export default {
     }
   },
   onLoad() {
+
     // 获取商品
     wx.request({
       url:

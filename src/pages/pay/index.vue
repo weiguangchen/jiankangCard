@@ -16,7 +16,7 @@
             <radio value='0' />
           </label>
           <label class="pay-type-item">
-            <span class="text"><img src="/static/images/pay/ye.png" alt="" mode='widthFix' class="img">余额支付</span>
+            <span class="text"><img src="/static/images/pay/ye.png" alt="" mode='widthFix' class="img">余额支付 (余额：{{userDetail.money}}元)</span>
             <radio value='1' />
           </label>
           <label class="pay-type-item">
@@ -35,24 +35,28 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import ifLoginMixin from "@/mixin/ifLoginMixin";
+
 var md5 = require("js-md5");
 export default {
   data() {
     return {
       payType: "",
-      price: ""
+      price: "" /* 商品价格 */,
+      addressId: "" /* 收货地址id */
     };
   },
 
-  components: {},
   computed: {
-    ...mapState(["userInfo", "sessionId"]),
     radioSelected: function() {
       if (this.payType == "") {
         return false;
       } else {
         return true;
       }
+    },
+    format_yue(price) {
+      var yue = this.userDetail;
     }
   },
   methods: {
@@ -62,52 +66,221 @@ export default {
     },
     pay: function() {
       var _this = this;
-      var userId = this.sessionId;
-      var price = this.price;
-      console.log("id" + userId);
-      console.log("price" + price);
-      wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay",
-        data: {
-          id: userId,
-          total_fee: price
-        },
-        success: function(res) {
-          console.log(res);
-          var appId = "wx8be30843f16d7320";
-          var timeStamp = new Date().getTime().toString();
-          var mypackage = res.data;
-          var signType = "MD5";
-          var nonceStr = _this.createNonceStr();
+      var yue = this.userDetail.money - this.price;
 
-          var stringA =
-            "appId=" +
-            appId +
-            "&nonceStr=" +
-            nonceStr +
-            "&package=" +
-            mypackage +
-            "&signType=" +
-            signType +
-            "&timeStamp=" +
-            timeStamp;
-          var stringSignTemp =
-            stringA + "&key=606b755058932821cdbcbde7adbd0ee1"; //注：key为商户平台设置的密钥key
-          var paySign = md5(stringSignTemp).toUpperCase(); //注：MD5签名方式
+      if (this.payType == 0) {
+        // 微信支付
+        wx.request({
+          url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay",
+          data: {
+            id: _this.sessionId,
+            zong: _this.price,
+            yue: 0,
+            adress: _this.addressId
+          },
+          success: function(res) {
+            console.log(res);
+            // 数据中订单id
+            var pay_order_id = res.data.pay_order_id;
 
-          wx.requestPayment({
-            appId,
-            timeStamp,
-            package: mypackage,
-            signType,
-            paySign,
-            nonceStr,
-            success: function(res) {
-              console.log(res);
+            var appId = "wx8be30843f16d7320";
+            var timeStamp = new Date().getTime().toString();
+            var mypackage = res.data;
+            var signType = "MD5";
+            var nonceStr = _this.createNonceStr();
+
+            var stringA =
+              "appId=" +
+              appId +
+              "&nonceStr=" +
+              nonceStr +
+              "&package=" +
+              mypackage +
+              "&signType=" +
+              signType +
+              "&timeStamp=" +
+              timeStamp;
+            var stringSignTemp =
+              stringA + "&key=606b755058932821cdbcbde7adbd0ee1"; //注：key为商户平台设置的密钥key
+            var paySign = md5(stringSignTemp).toUpperCase(); //注：MD5签名方式
+
+            wx.requestPayment({
+              appId,
+              timeStamp,
+              package: mypackage,
+              signType,
+              paySign,
+              nonceStr,
+              success: function(res) {
+                console.log(res);
+                // 支付成功修改数据库订单状态
+                wx.request({
+                  url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_ok",
+                  data: {
+                    id: pay_order_id
+                  },
+                  success: res => {
+                    var url = "../me/main";
+                    wx.switchTab({ url });
+                  }
+                });
+              }
+            });
+          }
+        });
+      } else if (this.payType == 1) {
+        if (yue < 0) {
+          // 余额不足
+          wx.showModal({
+            title: "提示",
+            showCancel: false,
+            content: "您的账户余额不足，请选择其他支付方式。"
+          });
+        } else {
+          // 余额支付
+          wx.showModal({
+            title: "支付",
+            content: "确认使用余额支付？",
+            success: res => {
+              if (res.confirm) {
+                wx.showLoading();
+                wx.request({
+                  url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/yue_pay",
+                  data: {
+                    id: _this.sessionId,
+                    yue: _this.price,
+                    adress: _this.addressId
+                  },
+                  success: function(res) {
+                    console.log(res);
+                    var pay_order_id = res.data.pay_order_id;
+                    wx.request({
+                      url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_ok",
+                      data: {
+                        id: pay_order_id
+                      },
+                      success: res => {
+                        wx.hideLoading();
+                        wx.showModal({
+                          title: "提示",
+                          content: "支付成功！",
+                          showCancel: false,
+                          success: res => {
+                            var url = "../me/main";
+                            wx.switchTab({ url });
+                          }
+                        });
+                      }
+                    });
+                  }
+                });
+              }
             }
           });
         }
-      });
+      } else if (this.payType == 2) {
+        // 混合支付
+        if (yue < 0) {
+          // 余额不足
+          wx.request({
+            url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay",
+            data: {
+              id: _this.sessionId,
+              zong: _this.price,
+              yue: _this.userDetail.money,
+              adress: _this.addressId
+            },
+            success: function(res) {
+              console.log(res);
+              // 数据中订单id
+              var pay_order_id = res.data.pay_order_id;
+              var appId = "wx8be30843f16d7320";
+              var timeStamp = new Date().getTime().toString();
+              var mypackage = res.data;
+              var signType = "MD5";
+              var nonceStr = _this.createNonceStr();
+
+              var stringA =
+                "appId=" +
+                appId +
+                "&nonceStr=" +
+                nonceStr +
+                "&package=" +
+                mypackage +
+                "&signType=" +
+                signType +
+                "&timeStamp=" +
+                timeStamp;
+              var stringSignTemp =
+                stringA + "&key=606b755058932821cdbcbde7adbd0ee1"; //注：key为商户平台设置的密钥key
+              var paySign = md5(stringSignTemp).toUpperCase(); //注：MD5签名方式
+
+              wx.requestPayment({
+                appId,
+                timeStamp,
+                package: mypackage,
+                signType,
+                paySign,
+                nonceStr,
+                success: function(res) {
+                  console.log(res);
+                  // 支付成功修改数据库订单状态
+                  wx.request({
+                    url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_ok",
+                    data: {
+                      id: pay_order_id
+                    },
+                    success: res => {
+                      var url = "../me/main";
+                      wx.switchTab({ url });
+                    }
+                  });
+                }
+              });
+            }
+          });
+        } else {
+          // 余额足够
+          wx.showModal({
+            title: "支付",
+            content: "确认使用余额支付？",
+            success: res => {
+              if (res.confirm) {
+                wx.showLoading();
+                wx.request({
+                  url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/yue_pay",
+                  data: {
+                    id: _this.sessionId,
+                    yue: _this.price,
+                    adress: _this.addressId
+                  },
+                  success: function(res) {
+                    var pay_order_id = res.data.pay_order_id;
+                    wx.request({
+                      url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_ok",
+                      data: {
+                        id: pay_order_id
+                      },
+                      success: res => {
+                        wx.hideLoading();
+                        wx.showModal({
+                          title: "提示",
+                          content: "支付成功！",
+                          showCancel: false,
+                          success: res => {
+                            var url = "../me/main";
+                            wx.switchTab({ url });
+                          }
+                        });
+                      }
+                    });
+                  }
+                });
+              }
+            }
+          });
+        }
+      }
     },
     createNonceStr: function() {
       return Math.random()
@@ -118,13 +291,13 @@ export default {
   },
 
   onLoad() {
-    this.payType = "";
     this.price = this.$root.$mp.query.price;
+    this.addressId = this.$root.$mp.query.addressId;
   },
-  created() {
-    // 调用应用实例的方法获取全局数据
-    // this.getUserInfo();
-  }
+  onShow() {
+    this.payType = "";
+  },
+  mixins: [ifLoginMixin]
 };
 </script>
 
@@ -153,6 +326,8 @@ page {
     .title,
     .count {
       line-height: 1;
+      display: flex;
+      justify-content: center;
     }
     .title {
       font-size: 22px;

@@ -72,7 +72,8 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 // mixin   包含大量复用的方法和变量
-import mymixin from "@/mixin/mymixin";
+import ifLoginMixin from "@/mixin/ifLoginMixin";
+// import mymixin from "@/mixin/mymixin";
 export default {
   data() {
     return {};
@@ -80,9 +81,12 @@ export default {
 
   components: {},
   computed: {
-    ...mapState(["userDetail"])
+    ...mapState(["userDetail", "fid", "pre_goodsId"]),
+    ...mapGetters(["ifLogin"])
   },
   methods: {
+    ...mapActions(["SAVE_SESSIONID", "SAVE_USERINFO"]),
+    ...mapMutations(["CLEAR_FID_SYNC"]),
     getUserInfo(res) {
       var _this = this;
       wx.getSetting({
@@ -104,7 +108,7 @@ export default {
         // 替换加号防止ajax传输+变为空格
         encryptedData = encryptedData.replace(/\+/g, "%2B");
         var iv = res.mp.detail.iv;
-
+        iv = iv.replace(/\+/g, "%2B");
         if (!this.ifLogin) {
           wx.login({
             success: res => {
@@ -117,7 +121,8 @@ export default {
                   data: {
                     code: res.code,
                     encryptedData,
-                    iv
+                    iv,
+                    fid: _this.fid
                   },
                   success: res => {
                     console.log(res);
@@ -146,6 +151,9 @@ export default {
       }
     }
   },
+  onHide() {
+    this.CLEAR_FID_SYNC();
+  },
   // onLoad() {
   //   // wx.getUserInfo({
   //   //   success: res => {
@@ -156,12 +164,7 @@ export default {
   //   // 获取sessionid
   //   // var sessionid = wx.getStorageSync("sessionid");
   // },
-  mixins: [mymixin],
-  onShow() {
-    console.log(
-      "getUserInfo是否可用:" + wx.canIUse("button.open-type.getUserInfo")
-    );
-  }
+  mixins: [ifLoginMixin]
 };
 </script>
 

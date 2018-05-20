@@ -32,7 +32,7 @@ const mutations = {
         state.fid = preload;
     },
     CLEAR_FID_SYNC(state,preload){
-        state.fid = '';
+        state.fid = 0;
     },
 
     // 设置sessionIsOk

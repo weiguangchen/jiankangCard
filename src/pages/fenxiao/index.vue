@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import ifLoginMixin from "@/mixin/ifLoginMixin";
 
 export default {
@@ -44,15 +45,17 @@ export default {
 
   onShow() {
     var scene = this.$root.$mp.appOptions.scene;
-    console.log(scene);
-    wx.showModal({
-      title: "场景值",
-      content: scene
-    });
-    
+    var fid = this.$root.$mp.query.fid;
+    // 判断是否是通过别人分享进入小程序    
+    if(scene == 1007 || scene == 1008){ 
+      this.SAVE_FID_SYNC(fid);
+    }else{
+      this.CLEAR_FID_SYNC(0);
+    }
   },
   computed: {},
   methods: {
+    ...mapMutations(['SAVE_FID_SYNC',"CLEAR_FID_SYNC"]),
     buy() {
       var url = "../detail/main?id=3";
       wx.navigateTo({ url });

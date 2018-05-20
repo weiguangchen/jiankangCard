@@ -9,7 +9,7 @@
               <span class="name">收款人： {{mr_ad.name}}</span>
               <span class="phone">手机号： {{mr_ad.phone}}</span>
             </div>
-            <div class="add">收货地址：  {{mr_ad.three}}{{mr_ad.adress}}</div>
+            <div class="add">收货地址： {{mr_ad.three}}{{mr_ad.adress}}</div>
           </div>
         </div>
         <div class="btn">
@@ -122,8 +122,19 @@ export default {
       wx.navigateTo({ url });
     },
     submitOrder() {
-      var url = "../pay/main?price=" + this.goodsDetail.product_price;
-      wx.navigateTo({ url });
+      var _this = this;
+      if (this.ifHasAd) {
+        var url = "../pay/main?price=" + this.goodsDetail.product_price+"&addressId="+this.mr_ad.id;
+        wx.navigateTo({ url });
+      }else{
+        wx.showModal({
+          title:'提示',
+          content:'请添加收货地址',
+          success:res=>{
+            _this.add_new();
+          }
+        })
+      }
     },
     previewImg() {
       var _this = this;
@@ -133,9 +144,6 @@ export default {
     }
   },
 
-  created() {
-    // 调用应用实例的方法获取全局数据
-  },
   onLoad() {
     // 获取产品id
     this.goodsId = this.$root.$mp.query.id;
@@ -173,8 +181,8 @@ $paddingleft: 15px;
     line-height: 55px;
   }
   .info {
-    width: 264px;
-    line-height: 1;
+    // width: 264px;
+    flex: 1;
     .title {
       font-size: 17px;
       color: #363636;
@@ -192,6 +200,9 @@ $paddingleft: 15px;
     }
   }
   .btn {
+    position: absolute;
+    top: 18px;
+    right: 6px;
     flex: 1;
     font-size: 11px;
     .changeAdd {

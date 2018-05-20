@@ -68,7 +68,7 @@ export default {
   data() {
     return {
       goodsDetail: {},
-      goodsId: "",
+      goodsId: ""
     };
   },
 
@@ -140,12 +140,21 @@ export default {
       }
     }
   },
-  onShareAppMessage() {
+  onShareAppMessage(res) {
     const _this = this;
-    return {
-      path: "../fenxiao/main?fid=" + this.sessionId,
-      title: _this.goodsDetail.product_name
-    };
+    if (res.from === "button") {
+      // 来自页面内转发按钮
+      var url;
+      if (this.userDetail.status == 1) {
+        url = "/pages/fenxiao/main?fid=" + this.sessionId;
+      } else if (this.userDetail.status == 0) {
+        url = "/pages/fenxiao/main?fid=";
+      }
+      return {
+        path: url,
+        title: _this.goodsDetail.product_name
+      };
+    }
   },
   onLoad() {
     // 获取产品id

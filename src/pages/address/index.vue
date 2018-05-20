@@ -160,9 +160,9 @@ export default {
                 console.log(res);
                 if (res.data.length > 1) {
                   //   多于一条
-                  //   wx.navigateBack({
-                  //     delta: 1
-                  //   });
+                    wx.navigateBack({
+                      delta: 1
+                    });
                 } else {
                   //   没有地址
                   // 设置为默认地址
@@ -176,9 +176,9 @@ export default {
                     success: res => {
                       console.log(res);
 
-                      //   wx.navigateBack({
-                      //     delta: 1
-                      //   });
+                        wx.navigateBack({
+                          delta: 1
+                        });
                     }
                   });
                 }
