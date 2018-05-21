@@ -80,12 +80,13 @@ export default {
           },
           success: function(res) {
             console.log(res);
+            console.log('package:'+res.data.package)
             // 数据中订单id
             var pay_order_id = res.data.pay_order_id;
 
             var appId = "wx8be30843f16d7320";
             var timeStamp = new Date().getTime().toString();
-            var mypackage = res.data;
+            var mypackage = res.data.package;
             var signType = "MD5";
             var nonceStr = _this.createNonceStr();
 
@@ -117,7 +118,7 @@ export default {
                 wx.request({
                   url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_ok",
                   data: {
-                    id: pay_order_id
+                    pay_order_id: pay_order_id
                   },
                   success: res => {
                     var url = "../me/main";
@@ -157,7 +158,7 @@ export default {
                     wx.request({
                       url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_ok",
                       data: {
-                        id: pay_order_id
+                        pay_order_id: pay_order_id
                       },
                       success: res => {
                         wx.hideLoading();
@@ -196,7 +197,7 @@ export default {
               var pay_order_id = res.data.pay_order_id;
               var appId = "wx8be30843f16d7320";
               var timeStamp = new Date().getTime().toString();
-              var mypackage = res.data;
+              var mypackage = res.data.package;
               var signType = "MD5";
               var nonceStr = _this.createNonceStr();
 
@@ -228,7 +229,7 @@ export default {
                   wx.request({
                     url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_ok",
                     data: {
-                      id: pay_order_id
+                      pay_order_id: pay_order_id
                     },
                     success: res => {
                       var url = "../me/main";
@@ -259,7 +260,7 @@ export default {
                     wx.request({
                       url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_ok",
                       data: {
-                        id: pay_order_id
+                        pay_order_id: pay_order_id
                       },
                       success: res => {
                         wx.hideLoading();

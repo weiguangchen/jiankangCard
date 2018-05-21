@@ -1,7 +1,7 @@
 <template>
   <div class="goods" @click="navigate">
     <h2 class="title">华泽健康卡 <img src="/static/images/index/arrow.png" alt="" class="arrow" mode='widthFix'></h2>
-    <img src="/static/images/index/jhk-1525856981592@2x.png" mode='widthFix' alt="" class="thumb">
+    <img :src="goods.product_img" mode='widthFix' alt="" class="thumb">
     <div class="desc">
       <div class="form">
         <div class="form-item">
@@ -27,7 +27,23 @@
 </template>
 <script>
 export default {
+  data() {
+    return {
+      goods: {}
+    };
+  },
   props: ["navUrl", "goodsId"],
+  created() {
+    // 获取商品
+    wx.request({
+      url:
+        "https://jkfx.tianjinliwu.com.cn/index.php?g=Api&m=pro&a=get_product",
+      success: res => {
+        console.log(res);
+        this.goods = res.data.data[0];
+      }
+    });
+  },
   methods: {
     navigate() {
       console.log(this.goodsId);

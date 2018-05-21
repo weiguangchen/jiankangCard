@@ -6,13 +6,13 @@
         <div class="person-box">
           <img :src="userInfo.avatarUrl" alt="" class="avatar">
           <div class="username">{{userInfo.nickName}}</div>
-          <div class="level">普通会员</div>
+          <div class="level">{{fenxiaoshang}}</div>
         </div>
         <div class="info">
           <div class="balance">我的余额</div>
           <div class="count">￥{{userDetail.money}}</div>
           <div class="handle">
-            <button size='mini'>充值</button>
+            <button size='mini' @click="chongzhi">充值</button>
             <button size='mini'>提现</button>
           </div>
         </div>
@@ -27,7 +27,7 @@
     <!-- <button @click="getSetting">获取权限列表</button>
     <button @click="login">登录</button> -->
 
-    <div class="dingdan">
+    <!-- <div class="dingdan">
       <h2 class="title">我的订单</h2>
       <div class="menu">
         <div class="menu-item"><img src="/static/images/me/wfk.png" alt="" mode='widthFix'>
@@ -46,8 +46,12 @@
           <span>全部</span>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="menu-list">
+      <div class="cell">
+        <span>我的订单</span>
+        <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
+      </div>
       <div class="cell">
         <span>我的名片</span>
         <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
@@ -71,18 +75,23 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-// mixin   包含大量复用的方法和变量
 import ifLoginMixin from "@/mixin/ifLoginMixin";
-// import mymixin from "@/mixin/mymixin";
+
 export default {
   data() {
     return {};
   },
 
-  components: {},
   computed: {
-    ...mapState(["userDetail", "fid", "pre_goodsId"]),
-    ...mapGetters(["ifLogin"])
+    ...mapState(["fid", "pre_goodsId"]),
+    ...mapGetters(["ifLogin"]),
+    fenxiaoshang() {
+      if (this.ifFenxiaoshang) {
+        return "分销商";
+      } else {
+        return "普通会员";
+      }
+    }
   },
   methods: {
     ...mapActions(["SAVE_SESSIONID", "SAVE_USERINFO"]),
@@ -149,6 +158,10 @@ export default {
       } else if (res.mp.detail.errMsg == "getUserInfo:fail auth deny") {
         // console.log("拒绝了");
       }
+    },
+    chongzhi() {
+      var url = "../chongzhi/main";
+      wx.navigateTo({ url });
     }
   },
   onHide() {

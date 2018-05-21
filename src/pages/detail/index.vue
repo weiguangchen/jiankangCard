@@ -15,7 +15,7 @@
         <image src="/static/images/index/jhk-1525856981592@2x.png" class="slide-image" mode='widthFix' />
       </swiper-item>
     </swiper> -->
-    <image :src="goodsDetail.product_img" mode='center' class="banner" />
+    <image :src="goodsDetail.product_img" mode='aspectFit' class="banner" />
     <!-- 介绍 -->
     <div class="intr">
       <div class="title-wrap">
@@ -93,10 +93,8 @@ export default {
       });
     },
     notfx() {
-      wx.showModal({
-        title: "提示",
-        content: "请先成为分销商"
-      });
+      var url = "../fenxiao/main";
+      wx.switchTab({ url });
     },
     buy() {
       var _this = this;
@@ -143,6 +141,8 @@ export default {
   onShareAppMessage(res) {
     const _this = this;
     if (res.from === "button") {
+      console.log('转发')
+      console.log(this.userDetail)
       // 来自页面内转发按钮
       var url;
       if (this.userDetail.status == 1) {
@@ -178,7 +178,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["sessionId", "userInfo"]),
+    ...mapState(["sessionId", "userInfo","userDetail"]),
     ...mapGetters(["ifFenxiaoshang"])
   }
 };

@@ -27,23 +27,7 @@ export default {
   },
 
   methods: {
-    wxModal() {
-      var _this = this;
-      wx.showModal({
-        title: "是否打开设置页面重新授权",
-        content: "需要获取您的用户信息授权，请到小程序设置中打开授权",
-        confirmText: "去设置",
-        success: res => {
-          if (res.confirm) {
-            console.log("用户点击确定");
-            wx.openSetting();
-          } else if (res.cancel) {
-            console.log("用户点击取消");
-            _this.wxModal();
-          }
-        }
-      });
-    }
+   
   },
   onLoad() {
 
