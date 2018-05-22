@@ -33,7 +33,7 @@
       <div class="content">
         <img :src="goodsDetail.product_img" alt="" class="img" mode='aspectFit' @click="previewImg">
         <div class="info">
-          <p class="intr">华泽健康卡有健康的体魄才能有愉快的心情！</p>
+          <p class="intr">{{goodsDetail.product_name}}</p>
           <p class="price">￥
             <span class="num">{{goodsDetail.product_price}}</span>
           </p>

@@ -35,6 +35,13 @@ const mutations = {
         state.fid = 0;
     },
 
+    // 设置验证码倒计时
+    SAVE_ISSEND(state,preload){
+        state.yzm.isSend = preload 
+    },
+    SAVE_SECOND(state,preload){
+        state.yzm.second = preload;
+    },
     // 设置sessionIsOk
     SET_SESSIONISOK_SYNC(state,preload){
         state.sessionIsOk = preload;

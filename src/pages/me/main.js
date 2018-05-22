@@ -7,5 +7,6 @@ app.$mount()
 export default {
     config: {
         "navigationBarTitleText": "会员中心",
+        enablePullDownRefresh:true,
     }
 }

@@ -1,18 +1,18 @@
 <template>
-    <div class="app-bg">
-        <div class="money">
-            <h2 class="title">充值金额</h2>
-            <div class="m-input">
-                ￥<input type="digit" placeholder="请输入充值金额" placeholder-class='placeholder-class' class='input' v-model="money" @input='replaceInput'>
-            </div>
-        </div>
-        <div class="type">
-            <span class="left">支付方式</span>
-            <span class="right"><img src="/static/images/pay/wx.png" alt="" class="img" mode='widthFix'>微信支付</span>
-        </div>
-        <button type="warn" :disabled='!money' @click="chongzhi">充值</button>
-        <div class="more" @click="more">查看充值记录</div>
+  <div class="app-bg">
+    <div class="money">
+      <h2 class="title">充值金额</h2>
+      <div class="m-input">
+        ￥<input type="digit" placeholder="请输入充值金额" placeholder-class='placeholder-class' class='input' v-model="money" @input='replaceInput'>
+      </div>
     </div>
+    <div class="type">
+      <span class="left">支付方式</span>
+      <span class="right"><img src="/static/images/pay/wx.png" alt="" class="img" mode='widthFix'>微信支付</span>
+    </div>
+    <button type="warn" :disabled='enable' @click="chongzhi">充值</button>
+    <div class="more" @click="more">查看充值记录</div>
+  </div>
 
 </template>
 
@@ -23,7 +23,8 @@ var md5 = require("js-md5");
 export default {
   data() {
     return {
-      money: ""
+      money: "",
+      buying: false
     };
   },
 
@@ -43,6 +44,7 @@ export default {
     },
     chongzhi() {
       var _this = this;
+      this.buying = true;
       wx.request({
         url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_chongzhi",
         data: {
@@ -51,6 +53,7 @@ export default {
         },
         success: function(res) {
           console.log(res);
+          _this.buying = false;
           // 数据中订单id
           var pay_order_id = res.data.pay_order_id;
 
@@ -110,8 +113,17 @@ export default {
   },
   onUnload() {
     this.money = "";
+    this.buying = false;
   },
-
+  computed: {
+    enable() {
+      if (!this.money || this.buying) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
   mixins: [ifLoginMixin]
 };
 </script>

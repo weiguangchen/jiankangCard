@@ -8,7 +8,8 @@ import {
 export default {
   data() {
     return {
-      sessionIsOk: 0
+      sessionIsOk: 0,
+      bangdingModalShow: false
     }
   },
   methods: {
@@ -49,6 +50,10 @@ export default {
           console.log('用户详情')
           console.log(res)
           _this.SAVE_USERDETAIL_SYNC(res.data[0])
+
+
+          wx.stopPullDownRefresh();
+
         }
       });
     },
@@ -109,6 +114,20 @@ export default {
           // 缓存中无id
         }
       }
+    },
+    checkPhone() {
+      if ('bangding' in this.userDetail) {
+        if (this.userDetail.bangding == 1) {
+          console.log('已绑定')
+
+        } else if (this.userDetail.bangding == 0) {
+          console.log('未绑定')
+          this.bangdingModalShow = true;
+        }
+      }else{
+        console.log('没有bangding')
+      }
+
     }
   },
   computed: {
@@ -117,6 +136,8 @@ export default {
   },
   onShow() {
     this.checkSessinId();
+    this.checkPhone()
   },
 
 }
+

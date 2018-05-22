@@ -25,7 +25,7 @@
           </label>
         </radio-group>
       </div>
-      <button :disabled='!radioSelected' class="pay-btn" @click="pay">确认支付
+      <button :disabled='enable' class="pay-btn" @click="pay">确认支付
         <span>￥{{price}}</span>
       </button>
     </div>
@@ -42,18 +42,24 @@ export default {
   data() {
     return {
       payType: "",
+      buying: false,
       price: "" /* 商品价格 */,
       addressId: "" /* 收货地址id */
     };
   },
 
   computed: {
-    radioSelected: function() {
-      if (this.payType == "") {
-        return false;
-      } else {
+    enable: function() {
+      if (!this.payType || this.buying) {
         return true;
+      } else {
+        return false;
       }
+      // if (this.payType == "") {
+      //   return false;
+      // } else {
+      //   return true;
+      // }
     },
     format_yue(price) {
       var yue = this.userDetail;
@@ -69,6 +75,7 @@ export default {
       var yue = this.userDetail.money - this.price;
 
       if (this.payType == 0) {
+        this.buying = true;
         // 微信支付
         wx.request({
           url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay",
@@ -79,8 +86,9 @@ export default {
             adress: _this.addressId
           },
           success: function(res) {
+            _this.buying = false;
             console.log(res);
-            console.log('package:'+res.data.package)
+            console.log("package:" + res.data.package);
             // 数据中订单id
             var pay_order_id = res.data.pay_order_id;
 
@@ -182,6 +190,7 @@ export default {
       } else if (this.payType == 2) {
         // 混合支付
         if (yue < 0) {
+          this.buying = true;
           // 余额不足
           wx.request({
             url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay",
@@ -192,6 +201,7 @@ export default {
               adress: _this.addressId
             },
             success: function(res) {
+              _this.buying = false;
               console.log(res);
               // 数据中订单id
               var pay_order_id = res.data.pay_order_id;
@@ -294,6 +304,9 @@ export default {
   onLoad() {
     this.price = this.$root.$mp.query.price;
     this.addressId = this.$root.$mp.query.addressId;
+  },
+  onUnload(){
+    this.buying = false
   },
   onShow() {
     this.payType = "";

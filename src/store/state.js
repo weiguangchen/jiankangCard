@@ -3,6 +3,10 @@ const state = {
   userInfo: {},
   userDetail: {},
   pre_goodsId: '',
-  fid: 0
+  fid: 0,
+  yzm: {
+    isSend: false,
+    second: 60
+  }
 }
 export default state;

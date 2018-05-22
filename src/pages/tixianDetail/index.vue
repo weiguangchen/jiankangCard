@@ -1,8 +1,10 @@
 <template>
   <div class="app-bg">
-    <div class="cz-item" v-for="(item,index) in cz" :key="index">
+    <div class="cz-item" v-for="(item,index) in tx" :key="index">
+      <div class="status" v-if='item.status == 0'>审核中</div>
+      <div class="status" v-else>已完成</div>
       <div class="money">
-        <div class="title">充值金额</div>
+        <div class="title">提现金额</div>
         <div class="num">￥{{item.money}}</div>
       </div>
       <div class="info">
@@ -11,12 +13,12 @@
           <span class="right">{{userDetail.nickname}}</span>
         </div>
         <div class="line">
-          <span class="left">充值时间</span>
-          <span class="right">{{item.pay_time}}</span>
+          <span class="left">提现时间</span>
+          <span class="right">{{item.date}}</span>
         </div>
         <div class="line">
           <span class="left">到账日期</span>
-          <span class="right">{{item.pay_time}}</span>
+          <span class="right">{{item.sdate || '--'}}</span>
         </div>
       </div>
 
@@ -31,7 +33,7 @@ import ifLoginMixin from "@/mixin/ifLoginMixin";
 export default {
   data() {
     return {
-      cz: []
+      tx: []
     };
   },
 
@@ -39,13 +41,13 @@ export default {
     get_list() {
       var _this = this;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/chongzhi_list",
+        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/user_tixian_list",
         data: {
           uid: _this.sessionId
         },
         success: res => {
           console.log(res);
-          _this.cz = res.data.reverse();
+          _this.tx = res.data.reverse();
           wx.stopPullDownRefresh();
         }
       });
@@ -65,9 +67,16 @@ export default {
 .app-bg {
   padding: 10px 15px;
   .cz-item {
+    position: relative;
     margin-bottom: 10px;
     border-radius: 5px;
     background: #ffffff;
+    .status {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      font-size: 18px;
+    }
     .money {
       text-align: center;
       border-bottom: 1px dashed #cccccc;

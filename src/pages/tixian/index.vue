@@ -1,37 +1,43 @@
 <template>
-    <div class="app-bg">
-        <div class="account">
-            <span class="left">微信账户</span>
-            <span class="right"><img :src="userInfo.avatarUrl" alt="" class="img" mode='widthFix'>{{userInfo.nickName}}</span>
-        </div>
-        <div class="money">
-            <h2 class="title">提现金额</h2>
-            <div class="m-input">
-                ￥<input type="digit" placeholder="请输入提现金额" placeholder-class='placeholder-class' class='input' v-model="money" @input='replaceInput'>
-            </div>
-            <div class="can-use">可用金额：{{userDetail.money}}元</div>
-        </div>
-
-        <button type="warn" :disabled='!money' @click="tixian" class="btn">提现</button>
-        <div class="more" @click="more">查看提现记录</div>
+  <div class="app-bg">
+    <div class="account">
+      <span class="left">微信账户</span>
+      <span class="right"><img :src="userInfo.avatarUrl" alt="" class="img" mode='widthFix'>{{userInfo.nickName}}</span>
     </div>
+    <div class="money">
+      <h2 class="title">提现金额</h2>
+      <div class="m-input">
+        ￥<input type="digit" placeholder="请输入提现金额" placeholder-class='placeholder-class' class='input' v-model="money" @input='replaceInput'>
+      </div>
+      <div class="can-use">可用金额：{{userDetail.money}}元</div>
+    </div>
+
+    <button type="warn" :disabled='!money' @click="tixian" class="btn">提现</button>
+    <div class="more" @click="more">查看提现记录</div>
+    <myModal v-if="modalShow" @modalShow='closeModal' type='2'></myModal>
+  </div>
 
 </template>
 
 <script>
 import ifLoginMixin from "@/mixin/ifLoginMixin";
+import myModal from "@/components/modal/modal";
 var md5 = require("js-md5");
 
 export default {
   data() {
     return {
-      money: ""
+      money: "",
+      modalShow: false,
+
     };
   },
-
+  components: {
+    myModal
+  },
   methods: {
     more() {
-      var url = "../chongzhiDetail/main?id=" + this.sessionId;
+      var url = "../tixianDetail/main?id=" + this.sessionId;
       wx.navigateTo({ url });
     },
     replaceInput(e) {
@@ -43,89 +49,53 @@ export default {
         }
       }
     },
-    chongzhi() {
+    tixian() {
       var _this = this;
-      wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_chongzhi",
-        data: {
-          id: _this.sessionId,
-          total_fee: 1
-        },
-        success: function(res) {
-          console.log(res);
-          // 数据中订单id
-          var pay_order_id = res.data.pay_order_id;
+      this.modalShow = true;
 
-          var appId = "wx8be30843f16d7320";
-          var timeStamp = new Date().getTime().toString();
-          var mypackage = res.data.package;
-          var signType = "MD5";
-          var nonceStr = _this.createNonceStr();
-
-          var stringA =
-            "appId=" +
-            appId +
-            "&nonceStr=" +
-            nonceStr +
-            "&package=" +
-            mypackage +
-            "&signType=" +
-            signType +
-            "&timeStamp=" +
-            timeStamp;
-          var stringSignTemp =
-            stringA + "&key=606b755058932821cdbcbde7adbd0ee1"; //注：key为商户平台设置的密钥key
-          var paySign = md5(stringSignTemp).toUpperCase(); //注：MD5签名方式
-
-          wx.requestPayment({
-            appId,
-            timeStamp,
-            package: mypackage,
-            signType,
-            paySign,
-            nonceStr,
-            success: function(res) {
-              //   充值成功
-              console.log(res);
-              wx.request({
-                url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/chongzhi_ok",
-                data: {
-                  uid: _this.sessionId,
-                  pay_order_id: pay_order_id
-                },
-                success: res => {
-                  var url = "../me/main";
-                  wx.switchTab({ url });
-                }
-              });
-            }
-          });
-        }
-      });
+      // if (this.money < this.userDetail.money) {
+      //   // 余额大于提现金额，可以提现
+      //   wx.request({
+      //     url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/user_tui",
+      //     data: {
+      //       money: _this.money,
+      //       uid: _this.sessionId
+      //     },
+      //     success: res => {
+      //       // console.log(res);
+      //       var txId = res.data;
+      //       wx.showModal({
+      //         title: "提示",
+      //         content: "提现申请已经提交，请等待审核",
+      //         showCancel: false,
+      //         success: res => {
+      //           if (res.confirm) {
+      //             var url = "../tixianlc/main?id=" + txId;
+      //             wx.navigateTo({ url });
+      //           }
+      //         }
+      //       });
+      //     }
+      //   });
+      // } else {
+      //   // 余额小于提现金额，不可以提现
+      //   wx.showModal({
+      //     title: "提示",
+      //     content: "可用金额不足！"
+      //   });
+      // }
     },
-    createNonceStr: function() {
-      return Math.random()
-        .toString(36)
-        .substr(2, 15)
-        .toString();
+    closeModal() {
+      this.modalShow = false;
     },
-    tixian(){
-        if(this.money<this.userDetail.money){
-            // 余额大于提现金额，可以提现
 
-        }else{
-            // 余额小于提现金额，不可以提现
-            wx.showModal({
-                title:'提示',
-                content:'可用金额不足！'
-            })
-        }
-    }
   },
   onUnload() {
     this.money = "";
   },
-
+  onShow() {
+    console.log("用户余额：" + this.userDetail.money);
+  },
   mixins: [ifLoginMixin]
 };
 </script>
@@ -157,11 +127,11 @@ export default {
       height: 36px;
     }
   }
-  .can-use{
-      height: 53px;
-      display: flex;
-      align-items: center;
-      font-size: 14px;
+  .can-use {
+    height: 53px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
   }
   .placeholder-class {
     font-size: 14px;
@@ -192,8 +162,8 @@ export default {
     }
   }
 }
-.btn{
-    margin: 0 15px;
+.btn {
+  margin: 0 15px;
 }
 .more {
   text-align: center;

@@ -13,7 +13,7 @@
           <div class="count">￥{{userDetail.money}}</div>
           <div class="handle">
             <button size='mini' @click="chongzhi">充值</button>
-            <button size='mini'>提现</button>
+            <button size='mini' @click="tixian">提现</button>
           </div>
         </div>
       </div>
@@ -48,7 +48,7 @@
       </div>
     </div> -->
     <div class="menu-list">
-      <div class="cell">
+      <div class="cell" @click="order_list">
         <span>我的订单</span>
         <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
       </div>
@@ -69,7 +69,7 @@
         <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
       </div>
     </div>
-
+    <myModal v-if="bangdingModalShow"></myModal>
   </div>
 </template>
 
@@ -77,9 +77,12 @@
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import ifLoginMixin from "@/mixin/ifLoginMixin";
 
+import myModal from "@/components/modal/modal";
 export default {
   data() {
-    return {};
+    return {
+      modalShow:false
+    };
   },
 
   computed: {
@@ -142,13 +145,14 @@ export default {
 
                     _this.getUserDetail();
                     wx.hideLoading();
+                    
 
                     //  如果是从商品页跳转过来，登录成功后返回商品页
-                    var goodsId = _this.pre_goodsId;
-                    if (goodsId) {
-                      var url = "../detail/main?id=" + goodsId;
-                      wx.navigateTo({ url });
-                    }
+                    // var goodsId = _this.pre_goodsId;
+                    // if (goodsId) {
+                    //   var url = "../detail/main?id=" + goodsId;
+                    //   wx.navigateTo({ url });
+                    // }
                   }
                 });
               }
@@ -162,10 +166,21 @@ export default {
     chongzhi() {
       var url = "../chongzhi/main";
       wx.navigateTo({ url });
+    },
+    tixian() {
+      var url = "../tixian/main";
+      wx.navigateTo({ url });
+    },
+    order_list() {
+      var url = "../orderList/main";
+      wx.navigateTo({ url });
     }
   },
   onHide() {
     this.CLEAR_FID_SYNC();
+  },
+  onPullDownRefresh(){
+    this.getUserDetail();
   },
   // onLoad() {
   //   // wx.getUserInfo({
@@ -177,6 +192,9 @@ export default {
   //   // 获取sessionid
   //   // var sessionid = wx.getStorageSync("sessionid");
   // },
+  components:{
+    myModal
+  },
   mixins: [ifLoginMixin]
 };
 </script>
@@ -332,3 +350,6 @@ export default {
   }
 }
 </style>
+
+
+

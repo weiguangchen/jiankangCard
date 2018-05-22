@@ -6,8 +6,7 @@ app.$mount()
 
 export default {
   config: {
-    navigationBarTitleText: '充值记录',
+    navigationBarTitleText: '我的订单',
     enablePullDownRefresh: true,
-
   }
 }

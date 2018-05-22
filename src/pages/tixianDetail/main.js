@@ -6,8 +6,7 @@ app.$mount()
 
 export default {
   config: {
-    navigationBarTitleText: '充值记录',
-    enablePullDownRefresh: true,
-
+    navigationBarTitleText: '提现记录',
+    enablePullDownRefresh:true,
   }
 }
