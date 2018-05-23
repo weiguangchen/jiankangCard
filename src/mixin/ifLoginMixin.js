@@ -68,7 +68,7 @@ export default {
           if (_this.sessionIsOk == 1) {
             console.log('id可用')
             _this.getUserDetail();
-
+            // _this.checkPhone();
             // id可用
           } else if (_this.sessionIsOk == 0) {
             console.log('id不可用')
@@ -115,20 +115,21 @@ export default {
         }
       }
     },
-    checkPhone() {
-      if ('bangding' in this.userDetail) {
-        if (this.userDetail.bangding == 1) {
-          console.log('已绑定')
+    // checkPhone() {
+    //   var cur = getCurrentPages();
+    //   if ('bangding' in this.userDetail) {
+    //     if (this.userDetail.bangding == 1) {
+    //       console.log('已绑定')
 
-        } else if (this.userDetail.bangding == 0) {
-          console.log('未绑定')
-          this.bangdingModalShow = true;
-        }
-      }else{
-        console.log('没有bangding')
-      }
+    //     } else if (this.userDetail.bangding == 0) {
+    //       console.log('未绑定')
+    //       this.bangdingModalShow = true;
+    //     }
+    //   } else {
+    //     console.log('没有bangding')
+    //   }
 
-    }
+    // }
   },
   computed: {
     ...mapState(["sessionId", "userInfo", "userDetail"]),
@@ -136,8 +137,6 @@ export default {
   },
   onShow() {
     this.checkSessinId();
-    this.checkPhone()
   },
 
 }
-

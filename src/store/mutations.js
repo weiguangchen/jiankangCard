@@ -42,6 +42,10 @@ const mutations = {
     SAVE_SECOND(state,preload){
         state.yzm.second = preload;
     },
+    SAVE_TIMESTRAP(state,preload){
+        state.yzm.timestrap = preload;
+    },
+
     // 设置sessionIsOk
     SET_SESSIONISOK_SYNC(state,preload){
         state.sessionIsOk = preload;

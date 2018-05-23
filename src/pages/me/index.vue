@@ -47,7 +47,7 @@
         </div>
       </div>
     </div> -->
-    <div class="menu-list">
+    <div class="menu-list" v-if="ifLogin">
       <div class="cell" @click="order_list">
         <span>我的订单</span>
         <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
@@ -69,7 +69,7 @@
         <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
       </div>
     </div>
-    <myModal v-if="bangdingModalShow"></myModal>
+    <!-- <myModal v-if="bangdingModalShow"></myModal> -->
   </div>
 </template>
 

@@ -4,11 +4,11 @@
             <div class="title">确认身份</div>
             <div class="form-group">
                 <span class="name">真实姓名：</span>
-                <div class="input-box"><input type="text" placeholder="请输入真实姓名"></div>
+                <div class="input-box"><input type="text" placeholder="请输入真实姓名" v-model="realName"></div>
             </div>
             <div class="form-group">
                 <span class="name">手机号码：</span>
-                <div class="input-box"><input type="number" placeholder="请输入有效手机号"></div>
+                <div class="input-box"><input type="number" placeholder="请输入有效手机号" v-model="phone"></div>
             </div>
             <div class="form-group">
                 <span class="name">短信验证码：</span>
@@ -32,34 +32,43 @@ export default {
       phone: ""
     };
   },
-  props: ["type"],
   computed: {
     ...mapState(["yzm"])
   },
   methods: {
-    ...mapMutations(["SAVE_ISSEND", "SAVE_SECOND"]),
+    ...mapMutations(["SAVE_ISSEND", "SAVE_SECOND", "SAVE_TIMESTRAP"]),
     yzmfn() {
       var _this = this;
-      var time = new Date().getTime();
-      console.log(time);
-      this.djs();
-      //   1526977275
-      // 1526977306084
       wx.request({
         url: "https://jkfx.tianjinliwu.com.cn/Api/Alidayu/alyzm",
         data: {
-          moblie: _this.phone
+          mobile: 15022485790
         },
         success: res => {
           console.log(res);
+          _this.djs(res.time);
         }
       });
     },
-    djs() {
-      this.SAVE_ISSEND(true);
+    djs(t) {
+      var second = 60;
+      this.SAVE_TIMESTRAP(t);
+      //   this.SAVE_ISSEND(true);
       var djs = setInterval(() => {
-        this.SAVE_SECOND(this.yzm.second--);
-        console.log(this.yzm.second--);
+        // this.SAVE_SECOND(this.yzm.second--);
+        var old = t * 1000;
+        var now = parseInt(
+          new Date()
+            .getTime()
+            .toString()
+            .substr(0, 10)
+        );
+        console.log(old);
+        console.log(typeof old, typeof now);
+        var last = (now - old) / 1000;
+        console.log(last);
+        var daojishi = second - last;
+        console.log(daojishi)
         if (this.yzm.second <= 0) {
           this.SAVE_ISSEND(false);
           clearInterval(djs);

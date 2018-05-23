@@ -6,7 +6,8 @@ const state = {
   fid: 0,
   yzm: {
     isSend: false,
-    second: 60
+    second: 60,
+    timestrap:''
   }
 }
 export default state;
