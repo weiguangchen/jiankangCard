@@ -1,27 +1,27 @@
 <template>
-    <div class="Mask">
-        <div class="my-modal">
-            <div class="title">确认身份</div>
-            <div class="form-group">
-                <span class="name">真实姓名：</span>
-                <div class="input-box"><input type="text" placeholder="请输入真实姓名" v-model="realName"></div>
-            </div>
-            <div class="form-group">
-                <span class="name">手机号码：</span>
-                <div class="input-box"><input type="number" placeholder="请输入有效手机号" v-model="phone"></div>
-            </div>
-            <div class="form-group">
-                <span class="name">短信验证码：</span>
-                <div class="input-box"><input type="text">
-                    <span class="yzm" @click="yzmfn" v-if='!yzm.isSend'>发送验证码</span>
-                    <span class="yzm ing" v-else>重新发送({{yzm.second}})</span>
-                </div>
-            </div>
-            <div class="btns">
-                <button size='mini' type="warn" class="btn" @click="submit">确认</button>
-            </div>
+  <div class="Mask">
+    <div class="my-modal">
+      <div class="title">确认身份</div>
+      <div class="form-group">
+        <span class="name">真实姓名：</span>
+        <div class="input-box"><input type="text" placeholder="请输入真实姓名" v-model="realName"></div>
+      </div>
+      <div class="form-group">
+        <span class="name">手机号码：</span>
+        <div class="input-box"><input type="number" placeholder="请输入有效手机号" v-model="phone"></div>
+      </div>
+      <div class="form-group">
+        <span class="name">短信验证码：</span>
+        <div class="input-box"><input type="number" v-model="yzmNum">
+          <span class="yzm" @click="yzmfn" v-if='!isSend'>发送验证码</span>
+          <span class="yzm ing" v-else>重新发送({{second}})</span>
         </div>
+      </div>
+      <div class="btns">
+        <button size='mini' type="warn" class="btn" @click="submit">确认</button>
+      </div>
     </div>
+  </div>
 </template>
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
@@ -29,12 +29,19 @@ export default {
   data() {
     return {
       realName: "",
-      phone: ""
+      phone: "",
+      yzmNum: "",
+      code: "",
+      isSend: false,
+      second: 60
     };
   },
   computed: {
-    ...mapState(["yzm"])
+    ...mapState(["yzm","sessionId"]),
+    ...mapGetters(["isSend"])
   },
+
+  onShow() {},
   methods: {
     ...mapMutations(["SAVE_ISSEND", "SAVE_SECOND", "SAVE_TIMESTRAP"]),
     yzmfn() {
@@ -42,49 +49,85 @@ export default {
       wx.request({
         url: "https://jkfx.tianjinliwu.com.cn/Api/Alidayu/alyzm",
         data: {
-          mobile: 15022485790
+          mobile: _this.phone
         },
         success: res => {
           console.log(res);
-          _this.djs(res.time);
+          // _this.SAVE_ISSEND(true);
+          _this.isSend = true;
+          _this.code = res.data.code;
+          _this.djs();
         }
       });
     },
-    djs(t) {
-      var second = 60;
-      this.SAVE_TIMESTRAP(t);
-      //   this.SAVE_ISSEND(true);
+    djs() {
+      // var timeStrap = this.yzm.timestrap;
+      // var now = new Date().getTime.toString().substr(0, 10);
+      // var lastTime = parseInt(now) - timeStrap;
+      // console.log("已经经过多少秒" + lastTime);
+      // var second = 60 - lastTime;
+      // this.SAVE_SECOND(second);
       var djs = setInterval(() => {
-        // this.SAVE_SECOND(this.yzm.second--);
-        var old = t * 1000;
-        var now = parseInt(
-          new Date()
-            .getTime()
-            .toString()
-            .substr(0, 10)
-        );
-        console.log(old);
-        console.log(typeof old, typeof now);
-        var last = (now - old) / 1000;
-        console.log(last);
-        var daojishi = second - last;
-        console.log(daojishi)
-        if (this.yzm.second <= 0) {
-          this.SAVE_ISSEND(false);
+        var newtime = this.second - 1;
+        if (newtime <= 0) {
+          this.isSend = false;
           clearInterval(djs);
-          this.SAVE_SECOND(60);
+          this.second = 60;
+        } else {
+          this.second = newtime;
         }
       }, 1000);
     },
     submit() {
-      wx.request({
-        url: "",
-        data: {},
-        success: res => {
+      var _this = this;
+      console.log('code:'+this.code)
+      console.log('yzm:'+this.yzmNum)
+      if (!_this.realName) {
+        wx.showModal({
+          title: "提示",
+          showCancel: false,
+          content: "请填写用户名"
+        });
+      } else if (!this.phone || !/^1[3|4|5|8][0-9]\d{4,8}$/.test(_this.phone)) {
+        wx.showModal({
+          title: "提示",
+          showCancel: false,
+          content: "请填写正确手机号"
+        });
+      } else if (!this.yzmNum || this.yzmNum != this.code) {
+        wx.showModal({
+          title: "提示",
+          showCancel: false,
+          content: "验证码填写错误"
+        });
+      } else {
+        this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/userShow/ws", {
+          uid: _this.sessionId,
+          user_name: _this.realName,
+          user_phone: _this.phone
+        }).then(res => {
           console.log(res);
-        }
-      });
+          if(res.status ==1){
+            wx.showModal({
+              title:'提示',
+              showCancel:false,
+              content:'绑定身份成功！'
+            })
+          }
+        });
+      }
     }
+    // checkYzm() {
+    //   var timeStrap = this.yzm.timestrap;
+    //   if (timeStrap) {
+    //     var now = new Date().getTime.toString().substr(0, 10);
+    //     var last = (parseInt(now * 1000) - timeStrap * 1000) / 1000;
+    //     console.log(last);
+    //     if (last >= 60) {
+    //       this.SAVE_TIMESTRAP("");
+    //     }
+    //   }
+    // }
   }
 };
 </script>

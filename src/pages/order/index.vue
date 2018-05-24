@@ -59,18 +59,22 @@
     </div>
     <!-- 提交订单 -->
     <div class="submit" @click="submitOrder">提交订单</div>
+    <myModal v-if="showMyModal" @modalShow='closeModal'></myModal>
   </div>
 </template>
 
 <script>
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import ifLoginMixin from "@/mixin/ifLoginMixin";
+import myModal from "@/components/modal/modal";
 
 export default {
   data() {
     return {
       goodsId: "",
       goodsDetail: {},
-      mr_ad: {}
+      mr_ad: {},
+      showMyModal: false
       // sendType: "",
       // ifReceipt: "",
       // array1: ["普通快递", "邮政"],
@@ -93,6 +97,7 @@ export default {
     });
   },
   computed: {
+    ...mapGetters(["ifBangding"]),
     ifHasAd() {
       if (this.mr_ad.log == 0) {
         return false;
@@ -102,7 +107,7 @@ export default {
     }
   },
   components: {
-    // myCell
+    myModal
   },
 
   methods: {
@@ -123,17 +128,28 @@ export default {
     },
     submitOrder() {
       var _this = this;
-      if (this.ifHasAd) {
-        var url = "../pay/main?price=" + this.goodsDetail.product_price+"&addressId="+this.mr_ad.id;
-        wx.navigateTo({ url });
-      }else{
-        wx.showModal({
-          title:'提示',
-          content:'请添加收货地址',
-          success:res=>{
-            _this.add_new();
-          }
-        })
+
+      if (this.ifBangding) {
+        console.log('绑定了')
+        if (this.ifHasAd) {
+          var url =
+            "../pay/main?price=" +
+            this.goodsDetail.product_price +
+            "&addressId=" +
+            this.mr_ad.id;
+          wx.navigateTo({ url });
+        } else {
+          wx.showModal({
+            title: "提示",
+            content: "请添加收货地址",
+            success: res => {
+              _this.add_new();
+            }
+          });
+        }
+      } else {
+        console.log('没绑定')
+        this.showMyModal = true;
       }
     },
     previewImg() {

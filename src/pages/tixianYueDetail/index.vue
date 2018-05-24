@@ -1,8 +1,8 @@
 <template>
   <div class="app-bg">
     <div class="cz-item" v-for="(item,index) in tx" :key="index">
-      <div class="status" v-if='item.status == 0'>审核中</div>
-      <div class="status" v-else>已完成</div>
+      <!-- <div class="status" v-if='item.status == 0'>审核中</div> -->
+      <!-- <div class="status" v-else>已完成</div> -->
       <div class="money">
         <div class="title">提现金额</div>
         <div class="num">￥{{item.money}}</div>
@@ -16,10 +16,10 @@
           <span class="left">提现时间</span>
           <span class="right">{{item.date}}</span>
         </div>
-        <div class="line">
+        <!-- <div class="line">
           <span class="left">到账日期</span>
           <span class="right">{{item.sdate || '--'}}</span>
-        </div>
+        </div> -->
       </div>
 
     </div>
@@ -41,7 +41,7 @@ export default {
     get_list() {
       var _this = this;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/user_tixian_list",
+        url: "https://jkfx.tianjinliwu.com.cn/Api/YjShow/yj_order",
         data: {
           uid: _this.sessionId
         },

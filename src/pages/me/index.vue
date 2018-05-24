@@ -52,19 +52,19 @@
         <span>我的订单</span>
         <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
       </div>
-      <div class="cell">
+      <!-- <div class="cell">
         <span>我的名片</span>
         <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
-      </div>
-      <div class="cell">
+      </div> -->
+      <div class="cell" @click='team'>
         <span>我的团队</span>
         <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
       </div>
-      <div class="cell">
+      <div class="cell" @click="mineYongjin">
         <span>我的佣金</span>
         <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
       </div>
-      <div class="cell last-cell">
+      <div class="cell last-cell" @click="fenxiaoOrder">
         <span>分销订单</span>
         <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
       </div>
@@ -81,7 +81,7 @@ import myModal from "@/components/modal/modal";
 export default {
   data() {
     return {
-      modalShow:false
+      modalShow: false
     };
   },
 
@@ -145,7 +145,6 @@ export default {
 
                     _this.getUserDetail();
                     wx.hideLoading();
-                    
 
                     //  如果是从商品页跳转过来，登录成功后返回商品页
                     // var goodsId = _this.pre_goodsId;
@@ -174,12 +173,24 @@ export default {
     order_list() {
       var url = "../orderList/main";
       wx.navigateTo({ url });
+    },
+    team() {
+      var url = "../team/main";
+      wx.navigateTo({ url });
+    },
+    fenxiaoOrder() {
+      var url = "../fenxiaoOrder/main";
+      wx.navigateTo({ url });
+    },
+    mineYongjin() {
+      var url = "../mineYongjin/main";
+      wx.navigateTo({ url });
     }
   },
   onHide() {
     this.CLEAR_FID_SYNC();
   },
-  onPullDownRefresh(){
+  onPullDownRefresh() {
     this.getUserDetail();
   },
   // onLoad() {
@@ -192,7 +203,7 @@ export default {
   //   // 获取sessionid
   //   // var sessionid = wx.getStorageSync("sessionid");
   // },
-  components:{
+  components: {
     myModal
   },
   mixins: [ifLoginMixin]

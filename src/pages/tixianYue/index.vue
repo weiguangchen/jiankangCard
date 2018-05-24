@@ -1,8 +1,7 @@
 <template>
   <div class="app-bg">
     <div class="account">
-      <span class="left">微信账户</span>
-      <span class="right"><img :src="userInfo.avatarUrl" alt="" class="img" mode='widthFix'>{{userInfo.nickName}}</span>
+      <span class="left">提现到余额</span>
     </div>
     <div class="money">
       <h2 class="title">提现金额</h2>
@@ -13,9 +12,9 @@
     </div>
 
     <button type="warn" :disabled='!money' @click="tixian" class="btn">提现</button>
-    <div class="more" @click="more">查看提现记录</div>
-    <myModal v-if="!ifBangding"></myModal>
-    <qrModal v-if='queren' @queren='querenFn'></qrModal>
+    <div class="more" @click="more">查看提现到余额记录</div>
+    <!-- <myModal v-if="!ifBangding"></myModal>
+    <qrModal v-if='queren' @queren='querenFn'></qrModal> -->
   </div>
 
 </template>
@@ -56,7 +55,23 @@ export default {
 
       if (this.money < this.userDetail.money) {
         // 余额大于提现金额，可以提现
-        this.queren = true;
+        this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/YjShow/yj_yue", {
+          uid: _this.sessionId,
+          yj: _this.money
+        }).then(res => {
+          console.log(res);
+          wx.showModal({
+            title: "提示",
+            content: "提现成功",
+            showCancel: false,
+            success: res => {
+              if (res.confirm) {
+                var url = "../me/main";
+                wx.switchTab({ url });
+              }
+            }
+          });
+        });
       } else {
         // 余额小于提现金额，不可以提现
         wx.showModal({
@@ -64,34 +79,6 @@ export default {
           content: "可用金额不足！"
         });
       }
-    },
-    querenFn() {
-      var _this =this;
-      this.queren = false;
-      wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/user_tui",
-        data: {
-          money: _this.money,
-          uid: _this.sessionId
-        },
-        success: res => {
-          var txId = res.data;
-          wx.showModal({
-            title: "提示",
-            content: "提现申请已经提交，请等待审核",
-            showCancel: false,
-            success: res => {
-              if (res.confirm) {
-                var url = "../tixianlc/main?id=" + txId;
-                wx.redirectTo({ url });
-              }
-            }
-          });
-        }
-      });
-    },
-    closeModal() {
-      this.queren = false;
     }
   },
   onUnload() {

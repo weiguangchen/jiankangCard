@@ -1,33 +1,33 @@
 <template>
-    <div class="app-bg">
-        <div class="form">
-            <div class="input">
-                <label>收款人姓名</label>
-                <input type="text" placeholder="请输入收款人姓名" placeholder-class='placeholder-class' v-model="username">
-            </div>
-            <div class="input">
-                <label>手机号</label>
-                <input type="number" placeholder="请输入收货人手机号" placeholder-class='placeholder-class' v-model="phone">
-            </div>
-            <div class="input">
-                <label>省市区</label>
-                <picker mode="region" @change="regionChange" :value="region">
-                    <div class="address-text" v-if="!addressed">请选择地址</div>
-                    <label v-else>{{region}}</label>
+  <div class="app-bg">
+    <div class="form">
+      <div class="input">
+        <label>收款人姓名</label>
+        <input type="text" placeholder="请输入收款人姓名" placeholder-class='placeholder-class' v-model="username">
+      </div>
+      <div class="input">
+        <label>手机号</label>
+        <input type="number" placeholder="请输入收货人手机号" placeholder-class='placeholder-class' v-model="phone">
+      </div>
+      <div class="input">
+        <label>省市区</label>
+        <picker mode="region" @change="regionChange" :value="region">
+          <div class="address-text" v-if="!addressed">请选择地址</div>
+          <label v-else>{{region}}</label>
 
-                </picker>
-            </div>
-            <div class="input">
-                <label>详细地址</label>
-                <input type="text" placeholder="请输入详细地址" placeholder-class='placeholder-class' v-model="address">
-            </div>
-            <!-- <div class="input input-last">
+        </picker>
+      </div>
+      <div class="input">
+        <label>详细地址</label>
+        <input type="text" placeholder="请输入详细地址" placeholder-class='placeholder-class' v-model="address">
+      </div>
+      <!-- <div class="input input-last">
                 <label>邮编</label>
                 <input type="text" placeholder="请输入邮编" placeholder-class='placeholder-class'>
             </div> -->
-        </div>
-        <button type="warn" @click="save_ad">保存地址</button>
     </div>
+    <button type="warn" @click="save_ad">保存地址</button>
+  </div>
 </template>
 
 <script>
@@ -79,116 +79,115 @@ export default {
     save_ad() {
       var _this = this;
       // 表单验证
-      //   if (!_this.username || _this.username.length < 3) {
-      //     wx.showToast({
-      //       title: "填写正确用户名",
-      //       icon: "none",
-      //       mask: true,
-      //       success: res => {
-      //         return false;
-      //       }
-      //     });
-      //   } else if (
-      //     !_this.phone ||
-      //     !/^1[3|4|5|8][0-9]\d{4,8}$/.test(_this.phone)
-      //   ) {
-      //     wx.showToast({
-      //       title: "请填写正确手机号",
-      //       mask: true,
-      //       success: res => {
-      //         return false;
-      //       }
-      //     });
-      //   } else if (!_this.region) {
-      //     wx.showToast({
-      //       title: "请选择省市区",
-      //       mask: true,
-      //       success: res => {
-      //         return false;
-      //       }
-      //     });
-      //   } else if (_this.address.lenght<0) {
-      //     wx.showToast({
-      //       title: "请填写详细地址",
-      //       mask: true,
-      //       success: res => {
-      //         return false;
-      //       }
-      //     });
-      //   } else {
-
-      if (_this.addressId) {
-        // 编辑地址
-        wx.request({
-          url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/edit_adress",
-          data: {
-            uid: _this.sessionId,
-            id: _this.addressId,
-            name: _this.username,
-            phone: _this.phone,
-            three:
-              _this.region[0] + "," + _this.region[1] + "," + _this.region[2],
-            adress: _this.address
-          },
+      if (!_this.username || _this.username.length < 3) {
+        wx.showToast({
+          title: "填写正确用户名",
+          icon: "none",
+          mask: true,
           success: res => {
-            console.log(res);
-            wx.navigateBack({
-              delta: 1
-            });
+            return false;
+          }
+        });
+      } else if (
+        !_this.phone ||
+        !/^1[3|4|5|8][0-9]\d{4,8}$/.test(_this.phone)
+      ) {
+        wx.showToast({
+          title: "请填写正确手机号",
+          mask: true,
+          success: res => {
+            return false;
+          }
+        });
+      } else if (!_this.region) {
+        wx.showToast({
+          title: "请选择省市区",
+          mask: true,
+          success: res => {
+            return false;
+          }
+        });
+      } else if (_this.address.lenght < 0) {
+        wx.showToast({
+          title: "请填写详细地址",
+          mask: true,
+          success: res => {
+            return false;
           }
         });
       } else {
-        //   新增地址
-        wx.request({
-          url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/add_adress",
-          data: {
-            id: _this.sessionId,
-            name: _this.username,
-            phone: _this.phone,
-            three: _this.region[0] + "," + _this.region[1] + "," + _this.region[2],
-            adress: _this.address
-          },
-          success: res => {
-            console.log(res);
-            // 判断用户是否有地址信息
-            wx.request({
-              url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/get_adress",
-              data: {
-                uid: _this.sessionId
-              },
-              success: res => {
-                console.log(res);
-                if (res.data.length > 1) {
-                  //   多于一条
+        if (_this.addressId) {
+          // 编辑地址
+          wx.request({
+            url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/edit_adress",
+            data: {
+              uid: _this.sessionId,
+              id: _this.addressId,
+              name: _this.username,
+              phone: _this.phone,
+              three:
+                _this.region[0] + "," + _this.region[1] + "," + _this.region[2],
+              adress: _this.address
+            },
+            success: res => {
+              console.log(res);
+              wx.navigateBack({
+                delta: 1
+              });
+            }
+          });
+        } else {
+          //   新增地址
+          wx.request({
+            url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/add_adress",
+            data: {
+              id: _this.sessionId,
+              name: _this.username,
+              phone: _this.phone,
+              three:
+                _this.region[0] + "," + _this.region[1] + "," + _this.region[2],
+              adress: _this.address
+            },
+            success: res => {
+              console.log(res);
+              // 判断用户是否有地址信息
+              wx.request({
+                url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/get_adress",
+                data: {
+                  uid: _this.sessionId
+                },
+                success: res => {
+                  console.log(res);
+                  if (res.data.length > 1) {
+                    //   多于一条
                     wx.navigateBack({
                       delta: 1
                     });
-                } else {
-                  //   没有地址
-                  // 设置为默认地址
-                  wx.request({
-                    url:
-                      "https://jkfx.tianjinliwu.com.cn/Api/userShow/sz_mr_adress",
-                    data: {
-                      uid: _this.sessionId,
-                      id: res.data[0].id
-                    },
-                    success: res => {
-                      console.log(res);
+                  } else {
+                    //   没有地址
+                    // 设置为默认地址
+                    wx.request({
+                      url:
+                        "https://jkfx.tianjinliwu.com.cn/Api/userShow/sz_mr_adress",
+                      data: {
+                        uid: _this.sessionId,
+                        id: res.data[0].id
+                      },
+                      success: res => {
+                        console.log(res);
 
                         wx.navigateBack({
                           delta: 1
                         });
-                    }
-                  });
+                      }
+                    });
+                  }
                 }
-              }
-            });
-          }
-        });
+              });
+            }
+          });
+        }
       }
-
-      //   }
     },
     usernameBlur() {
       _this.usernameFocus = false;

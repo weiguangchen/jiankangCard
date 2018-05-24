@@ -1,81 +1,86 @@
 <template>
-    <div class="Mask">
-        <div class="my-modal">
-            <div class="title">确认身份</div>
-            <img src="/static/images/cha.png" alt="" mode="widthFix" class="cancel" @click="cancel">
+  <div class="Mask">
+    <div class="my-modal">
+      <div class="title">确认身份</div>
+      <!-- <img src="/static/images/cha.png" alt="" mode="widthFix" class="cancel" @click="cancel"> -->
 
-            <div class="form-group">
-                <span class="name">绑定手机号：</span>
-                <div class="text">15022485790</div>
-            </div>
-            <div class="form-group">
-                <span class="name">短信验证码：</span>
-                <div class="input-box"><input type="number">
-                    <span class="yzm" @click="yzmfn" v-if='!yzm.isSend'>发送验证码</span>
-                    <span class="yzm ing" v-else>重新发送({{yzm.second}})</span>
-                </div>
-            </div>
-            <div class="btns">
-                <button size='mini' type="warn" class="btn" @click="submit">确认</button>
-            </div>
+      <div class="form-group">
+        <span class="name">绑定手机号：</span>
+        <div class="text">{{userDetail.user_phone}}</div>
+      </div>
+      <div class="form-group">
+        <span class="name">短信验证码：</span>
+        <div class="input-box"><input type="number" v-model="yzmNum">
+          <span class="yzm" @click="yzmfn" v-if='!isSend'>发送验证码</span>
+          <span class="yzm ing" v-else>重新发送({{second}})</span>
         </div>
+      </div>
+      <div class="btns">
+        <button size='mini' type="warn" class="btn" @click="submit">确认</button>
+      </div>
     </div>
+  </div>
 </template>
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   data() {
     return {
-      realName: "",
-      phone: ""
+      yzmNum: "",
+      code: "",
+      isSend: false,
+      second: 60,
+      interval:''
     };
   },
-  props: ["type"],
   computed: {
-    ...mapState(["yzm"])
+    ...mapState(["yzm", "userDetail"])
   },
   methods: {
-    ...mapMutations(["SAVE_ISSEND", "SAVE_SECOND"]),
-    cancel() {
-      this.$emit("modalShow");
-    },
+    // ...mapMutations(["SAVE_ISSEND", "SAVE_SECOND"]),
+    // cancel() {
+    //   this.$emit("modalShow");
+    // },
     yzmfn() {
       var _this = this;
-      var time = new Date().getTime();
-      console.log(time);
-      this.djs();
-      //   1526977275
-      // 1526977306084
       wx.request({
         url: "https://jkfx.tianjinliwu.com.cn/Api/Alidayu/alyzm",
         data: {
-          moblie: _this.phone
+          mobile: _this.userDetail.user_phone
         },
         success: res => {
           console.log(res);
+          // _this.SAVE_ISSEND(true);
+          _this.isSend = true;
+          _this.code = res.data.code;
+          _this.djs();
         }
       });
     },
     djs() {
-      this.SAVE_ISSEND(true);
-      var djs = setInterval(() => {
-        this.SAVE_SECOND(this.yzm.second--);
-        console.log(this.yzm.second--);
-        if (this.yzm.second <= 0) {
-          this.SAVE_ISSEND(false);
+      this.interval = setInterval(() => {
+        var newtime = this.second - 1;
+        if (newtime <= 0) {
+          this.isSend = false;
           clearInterval(djs);
-          this.SAVE_SECOND(60);
+          this.second = 60;
+        } else {
+          this.second = newtime;
         }
       }, 1000);
     },
     submit() {
-      wx.request({
-        url: "",
-        data: {},
-        success: res => {
-          console.log(res);
-        }
-      });
+      console.log('code:'+this.code) 
+      console.log('phone:'+this.userDetail.user_phone)
+      if(this.code == this.yzmNum){
+        this.$emit('queren');
+      }else{
+        wx.showModal({
+          title:'提示',
+          content:'验证码不正确',
+          showCancel:false
+        })
+      }
     }
   }
 };

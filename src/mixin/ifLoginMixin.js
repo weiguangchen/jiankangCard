@@ -9,7 +9,7 @@ export default {
   data() {
     return {
       sessionIsOk: 0,
-      bangdingModalShow: false
+      // bangding: false
     }
   },
   methods: {
@@ -20,6 +20,7 @@ export default {
       "SAVE_USERDETAIL_SYNC",
       "CLEAR_USERDETAIL_SYNC",
       "SET_SESSIONISOK_SYNC",
+      'SAVE_TIMESTRAP'
     ]),
     sessionIdIfTimeOut(fn) {
       wx.showLoading();
@@ -51,7 +52,7 @@ export default {
           console.log(res)
           _this.SAVE_USERDETAIL_SYNC(res.data[0])
 
-
+          _this.checkYzm();
           wx.stopPullDownRefresh();
 
         }
@@ -115,25 +116,36 @@ export default {
         }
       }
     },
-    // checkPhone() {
-    //   var cur = getCurrentPages();
-    //   if ('bangding' in this.userDetail) {
-    //     if (this.userDetail.bangding == 1) {
-    //       console.log('已绑定')
+    checkPhone() {
+      // if ('bangding' in this.userDetail) {
+      //   if (this.userDetail.bangding == 1) {
+      //     console.log('已绑定')
+      //     this.bangding = true
+      //   } else if (this.userDetail.bangding == 0) {
+      //     console.log('未绑定')
+      //     this.bangding = false
+      //   }
+      // } else {
+      //   console.log('没有bangding')
+      // }
 
-    //     } else if (this.userDetail.bangding == 0) {
-    //       console.log('未绑定')
-    //       this.bangdingModalShow = true;
-    //     }
-    //   } else {
-    //     console.log('没有bangding')
-    //   }
+    },
+    checkYzm() {
+      var timeStrap = this.yzm.timestrap;
+      if (timeStrap) {
+        var now = new Date().getTime.toString().substr(0, 10);
+        var last = (parseInt(now * 1000) - timeStrap * 1000) / 1000;
+        console.log(last);
+        if(last>=60){
+          this.SAVE_TIMESTRAP('')
+        }
+      }
 
-    // }
+    }
   },
   computed: {
-    ...mapState(["sessionId", "userInfo", "userDetail"]),
-    ...mapGetters(["ifFenxiaoshang"])
+    ...mapState(["sessionId", "userInfo", "userDetail","yzm"]),
+    ...mapGetters(["ifFenxiaoshang","ifBangding"])
   },
   onShow() {
     this.checkSessinId();
