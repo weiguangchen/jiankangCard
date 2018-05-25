@@ -90,7 +90,7 @@ export default {
         success: res => {
           console.log(res);
           _this.goodsDetail = res.data.xq[0];
-          _this.orderList = res.data.list;
+          _this.orderList = res.data.list.reverse();
           wx.stopPullDownRefresh();
         }
       });

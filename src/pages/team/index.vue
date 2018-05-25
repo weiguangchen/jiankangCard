@@ -10,6 +10,8 @@
             <img src="/static/images/team/fxs2.png" alt="" mode='widthFix' class="img" v-else>
             <span class="point">{{fx_count}}</span>
           </div>
+          <img src="/static/images/team/navbar.png" alt="" mode='widthFix' class="icon" v-if="type">
+
         </div>
         <div class="nav" :class="{active:!type}" @click="changeNavBar(false)">
           <div class="nav-text">我的会员</div>
@@ -18,6 +20,8 @@
             <img src="/static/images/team/hy2.png" alt="" mode='widthFix' class="img" v-else>
             <span class="point">{{hy_count}}</span>
           </div>
+          <img src="/static/images/team/navbar.png" alt="" mode='widthFix' class="icon" v-if="!type">
+
         </div>
       </div>
     </div>
@@ -346,8 +350,7 @@ export default {
               } else {
                 _this.fx_can_scroll = false;
               }
-              _this.fx_list =_this.fx_list.concat(res.data.list);
-              
+              _this.fx_list = _this.fx_list.concat(res.data.list);
             }
           });
         }
@@ -428,6 +431,7 @@ export default {
   left: 0;
 }
 .navbar {
+  height: 100%;
   position: relative;
   z-index: 100;
   display: flex;
@@ -439,6 +443,8 @@ export default {
     flex: 1;
     display: flex;
     padding-top: 6px;
+      position: relative;
+    z-index:200;
     .nav-text {
       text-align: center;
       font-size: 11px;
@@ -465,6 +471,14 @@ export default {
         background: #cb2620;
         border-radius: 50%;
       }
+    }
+    .icon {
+      position: absolute;
+      bottom: 4px;
+      left:50%;
+      transform: translateX(-50%);
+      z-index: 500;
+      width: 60px;
     }
   }
   .active {

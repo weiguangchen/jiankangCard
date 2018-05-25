@@ -45,7 +45,8 @@
           </div>
 
         </div>
-        <div class="content" v-html="goodsDetail.product_content">
+        <div class="content" >
+          <img :src="item.url" alt="" v-for="(item,index) in goodsDetail.smeta" :key="index" mode='widthFix' class="img"> 
         </div>
       </div>
 
@@ -235,8 +236,9 @@ export default {
       }
     }
     .content {
-      image {
+      .img {
         width: 100%;
+        margin: 10px 0;
       }
     }
     .img {

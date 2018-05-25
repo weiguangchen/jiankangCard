@@ -29,7 +29,9 @@
         <p class="content">亲爱的会员，你还不是分销商，在本店购买产品，消费满980元，即可成为本店的分销商，成为分销商有更多的收益模式，详情查看本页下面的分销说明。</p>
         <img src="/static/images/fx/fx-intr.png" alt="" class="img" mode='widthFix'>
       </div>
-
+      <div class="content">
+        <img src="/static/images/fx/info.png" alt="" mode='widthFix' class="img">
+      </div>
     </div>
   </div>
 </template>
@@ -167,6 +169,12 @@ $text-color: "#3A3A3A";
     .img {
       width: 130px;
       flex: none;
+    }
+  }
+  .content{
+    .img{
+      width: 100%;
+      margin: 10px 0;
     }
   }
 }
