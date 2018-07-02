@@ -1,8 +1,9 @@
 <template>
   <div class="goods" @click="navigate">
-    <h2 class="title">华泽健康卡 <img src="/static/images/index/arrow.png" alt="" class="arrow" mode='widthFix'></h2>
+    <h2 class="title">{{goods.product_name}}<img src="/static/images/index/arrow.png" alt="" class="arrow" mode='widthFix'></h2>
     <img :src="goods.product_img" mode='widthFix' alt="" class="thumb">
-    <div class="desc">
+    <!-- goods.product_img -->
+    <!-- <div class="desc">
       <div class="form">
         <div class="form-item">
           <span>属性1</span>
@@ -22,7 +23,7 @@
         </div>
 
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -54,7 +55,8 @@ export default {
 </script>
 <style lang="scss">
 .goods {
-  padding: 24px 15px;
+  flex: 1;
+  padding: 20px 15px 15px;
   background: #ffffff;
   .title {
     display: flex;
@@ -71,7 +73,7 @@ export default {
   }
   .thumb {
     width: 100%;
-    margin-bottom: 14px;
+    margin: 44px 5px 0;
   }
   .desc {
     font-size: 14px;

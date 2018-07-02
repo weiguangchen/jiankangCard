@@ -81,10 +81,24 @@ import myModal from "@/components/modal/modal";
 export default {
   data() {
     return {
-      modalShow: false
+      modalShow: false,
+      goods: {}
     };
   },
+  onShow() {
+    var canIUse = wx.canIUse("button.open-type.getUserInfo");
+    console.log(canIUse);
 
+    // 获取商品
+    wx.request({
+      url:
+        "https://jkfx.tianjinliwu.com.cn/index.php?g=Api&m=pro&a=get_product",
+      success: res => {
+        console.log(res);
+        this.goods = res.data.data[0];
+      }
+    });
+  },
   computed: {
     ...mapState(["fid", "pre_goodsId"]),
     ...mapGetters(["ifLogin"]),
@@ -205,6 +219,26 @@ export default {
   // },
   components: {
     myModal
+  },
+  onShareAppMessage(res) {
+    const _this = this;
+    // if (res.from === "button") {
+    //   console.log("转发");
+    //   console.log(this.userDetail);
+    // 来自页面内转发按钮
+    var url;
+    if (this.userDetail.status == 1) {
+      url = "/pages/fenxiao/main?fid=" + this.sessionId;
+      console.log(url);
+    } else if (this.userDetail.status == 0) {
+      url = "/pages/fenxiao/main?fid=" + this.userDetail.fid;
+      console.log(url);
+    }
+    return {
+      path: url,
+      title: _this.goods.product_name
+    };
+    // }
   },
   mixins: [ifLoginMixin]
 };

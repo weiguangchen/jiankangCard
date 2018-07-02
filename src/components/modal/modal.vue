@@ -13,12 +13,12 @@
       <div class="form-group">
         <span class="name">短信验证码：</span>
         <div class="input-box"><input type="number" v-model="yzmNum">
-          <span class="yzm" @click="yzmfn" v-if='!isSend'>发送验证码</span>
+          <button class="yzm" @click="yzmfn" v-if='!isSend' :disabled='yzming'>发送验证码</button>
           <span class="yzm ing" v-else>重新发送({{second}})</span>
         </div>
       </div>
       <div class="btns">
-        <button size='mini' type="warn" class="btn" @click="submit">确认</button>
+        <button size='mini' type="warn" class="btn" @click="submit" :disabled='submiting'>确认</button>
       </div>
     </div>
   </div>
@@ -28,6 +28,8 @@ import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   data() {
     return {
+      submiting: false,
+      yzming: false,
       realName: "",
       phone: "",
       yzmNum: "",
@@ -37,7 +39,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["yzm","sessionId"]),
+    ...mapState(["yzm", "sessionId"]),
     ...mapGetters(["isSend"])
   },
 
@@ -46,27 +48,42 @@ export default {
     ...mapMutations(["SAVE_ISSEND", "SAVE_SECOND", "SAVE_TIMESTRAP"]),
     yzmfn() {
       var _this = this;
-      wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/Alidayu/alyzm",
-        data: {
-          mobile: _this.phone
-        },
-        success: res => {
-          console.log(res);
-          // _this.SAVE_ISSEND(true);
-          _this.isSend = true;
-          _this.code = res.data.code;
-          _this.djs();
-        }
-      });
+      // 防止重复触发
+      this.yzming = true;
+      if (!_this.realName) {
+        wx.showModal({
+          title: "提示",
+          showCancel: false,
+          content: "请填写真实姓名",
+          success() {
+            _this.yzming = false;
+          }
+        });
+      } else if (!this.phone || !/^1[3|4|5|8][0-9]\d{4,8}$/.test(_this.phone)) {
+        wx.showModal({
+          title: "提示",
+          showCancel: false,
+          content: "请填写正确手机号",
+          success() {
+            _this.yzming = false;
+          }
+        });
+      } else {
+        wx.request({
+          url: "https://jkfx.tianjinliwu.com.cn/Api/Alidayu/alyzm",
+          data: {
+            mobile: _this.phone
+          },
+          success: res => {
+            console.log(res);
+            _this.isSend = true;
+            _this.code = res.data.code;
+            _this.djs();
+          }
+        });
+      }
     },
     djs() {
-      // var timeStrap = this.yzm.timestrap;
-      // var now = new Date().getTime.toString().substr(0, 10);
-      // var lastTime = parseInt(now) - timeStrap;
-      // console.log("已经经过多少秒" + lastTime);
-      // var second = 60 - lastTime;
-      // this.SAVE_SECOND(second);
       var djs = setInterval(() => {
         var newtime = this.second - 1;
         if (newtime <= 0) {
@@ -79,26 +96,36 @@ export default {
       }, 1000);
     },
     submit() {
+      this.submiting = true;
       var _this = this;
-      console.log('code:'+this.code)
-      console.log('yzm:'+this.yzmNum)
+      console.log("code:" + this.code);
+      console.log("yzm:" + this.yzmNum);
       if (!_this.realName) {
         wx.showModal({
           title: "提示",
           showCancel: false,
-          content: "请填写用户名"
+          content: "请填写真实姓名",
+          success() {
+            _this.submiting = false;
+          }
         });
       } else if (!this.phone || !/^1[3|4|5|8][0-9]\d{4,8}$/.test(_this.phone)) {
         wx.showModal({
           title: "提示",
           showCancel: false,
-          content: "请填写正确手机号"
+          content: "请填写正确手机号",
+          success() {
+            _this.submiting = false;
+          }
         });
       } else if (!this.yzmNum || this.yzmNum != this.code) {
         wx.showModal({
           title: "提示",
           showCancel: false,
-          content: "验证码填写错误"
+          content: "验证码填写错误",
+          success() {
+            _this.submiting = false;
+          }
         });
       } else {
         this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/userShow/ws", {
@@ -107,12 +134,24 @@ export default {
           user_phone: _this.phone
         }).then(res => {
           console.log(res);
-          if(res.status ==1){
+          if (res.data.status == 1) {
             wx.showModal({
-              title:'提示',
-              showCancel:false,
-              content:'绑定身份成功！'
-            })
+              title: "提示",
+              showCancel: false,
+              content: "绑定身份成功！",
+              success() {
+                _this.$emit("modalShow", false);
+              }
+            });
+          } else {
+            wx.showModal({
+              title: "提示",
+              showCancel: false,
+              content: "绑定身份失败！",
+              success() {
+                _this.checkSessinId();
+              }
+            });
           }
         });
       }

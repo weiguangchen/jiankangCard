@@ -20,7 +20,7 @@
         </div>
         <div class="right">
           <button size='mini' type="warn" class="btn" @click='tixianYue'>提现到余额</button>
-          <button size='mini' type="warn" class="btn" @click="tixianYueDetail">提现详情</button>
+          <button size='mini' type="warn" class="btn" @click="tixianYueDetail">提现记录</button>
         </div>
       </div>
     </div>

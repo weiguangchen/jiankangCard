@@ -14,7 +14,7 @@
         <img src="/static/images/finish.png" alt="" class="status-icon" mode='widthFix' v-if="item.status == 2">
       </div>
       <div class="info">
-        <button size='mini' type="warn" class="btn" @click="disabledbtn" :disabled='item.status == 2'>申请退款</button>
+        <button size='mini' type="warn" class="btn" :disabled='item.status == 0 || item.status == 2 || item.status == 3' @click="tuikuan(item.id)">申请退款</button>
         <div class="prices">
           <div class="jiage">共1件商品&nbsp;&nbsp;&nbsp;&nbsp;实付款 :
             <span class="num">￥{{item.order_price}}</span>
@@ -94,6 +94,22 @@ export default {
           wx.stopPullDownRefresh();
         }
       });
+    },
+    tuikuan(id) {
+      var _this = this;
+      wx.showLoading();
+      this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/userShow/order_tui", {
+        id
+      }).then(
+        res => {
+          wx.hideLoading();
+          console.log(res);
+          _this.get_list();
+        },
+        err => {
+          wx.hideLoading();
+        }
+      );
     }
   },
   onShow() {

@@ -57,7 +57,7 @@ export default {
           // 数据中订单id
           var pay_order_id = res.data.pay_order_id;
 
-          var appId = "wx8be30843f16d7320";
+          var appId = "wx5a2e090b5a4d6c5a";
           var timeStamp = new Date().getTime().toString();
           var mypackage = res.data.package;
           var signType = "MD5";

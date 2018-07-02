@@ -8,7 +8,7 @@
       <div class="m-input">
         ￥<input type="digit" placeholder="请输入提现金额" placeholder-class='placeholder-class' class='input' v-model="money" @input='replaceInput'>
       </div>
-      <div class="can-use">可用金额：{{userDetail.money}}元</div>
+      <div class="can-use">可用金额：{{yj}}元</div>
     </div>
 
     <button type="warn" :disabled='!money' @click="tixian" class="btn">提现</button>
@@ -29,7 +29,8 @@ export default {
   data() {
     return {
       money: "",
-      queren: false
+      queren: false,
+      yj:''
     };
   },
   components: {
@@ -52,8 +53,12 @@ export default {
     },
     tixian() {
       var _this = this;
-
-      if (this.money < this.userDetail.money) {
+      // console.log('money:'+this.money)
+      // console.log('可提现金额:'+this.yj)
+      // console.log(typeof this.money)
+      // console.log(typeof this.yj)
+      // console.log(parseInt(this.money) < parseInt(this.yj))
+      if (parseInt(this.money) < parseInt(this.yj)) {
         // 余额大于提现金额，可以提现
         this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/YjShow/yj_yue", {
           uid: _this.sessionId,
@@ -84,7 +89,16 @@ export default {
   onUnload() {
     this.money = "";
   },
-  onShow() {},
+  onShow() {
+    var _this = this;
+    // 获取统计信息
+    this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/YjShow/yj", {
+      uid: _this.sessionId
+    }).then(res => {
+      console.log(res);
+      _this.yj = res.data.yue;
+    });
+  },
   mixins: [ifLoginMixin]
 };
 </script>

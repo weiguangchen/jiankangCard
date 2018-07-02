@@ -97,6 +97,7 @@ export default {
     });
   },
   computed: {
+    ...mapState(['userDetail']),
     ...mapGetters(["ifBangding"]),
     ifHasAd() {
       if (this.mr_ad.log == 0) {
@@ -118,6 +119,10 @@ export default {
     // finishReceiptChange(data) {
     //   this.index2 = data;
     // },
+    closeModal(val){
+      this.showMyModal = val;
+      this.checkSessinId();
+    },
     add_new() {
       var url = "../address/main";
       wx.navigateTo({ url });
@@ -137,6 +142,7 @@ export default {
             this.goodsDetail.product_price +
             "&addressId=" +
             this.mr_ad.id;
+            console.log('跳转支付url：'+url)
           wx.navigateTo({ url });
         } else {
           wx.showModal({

@@ -1,12 +1,12 @@
 <template>
   <div class="app-bg">
     <div class="banner">
-      <img src="/static/images/fx/fx-banner.png" alt="" class="img" mode='widthFix'>
+      <img :src="pageInfo.two_img" alt="" class="img" mode='widthFix'>
     </div>
     <template v-if="!ifFenxiaoshang">
       <div class="tip">
         <h2 class="title">温馨提示 : </h2>
-        <p class="content">亲爱的会员，你还不是分销商，在本店该买产品，消费满980元，即可成为本店的分销商，成为分销商有更多的收益模式，详情查看本页下面的分销说明。</p>
+        <p class="content">{{pageInfo.product_content}}</p>
       </div>
       <button class="btn" type="warn" @click='buy'>购买</button>
     </template>
@@ -15,23 +15,25 @@
         <img :src="userInfo.avatarUrl" alt="" mode='widthFix' class="avatar">
         <span class="username">{{userInfo.nickName}}</span>
       </div>
-      <p class="content">健康卡拥有6大服务板块，分别针对人体的各个组织进行调整。分别针对人体的各个组织进行调整。分别针对人体的各个组织进行调整。</p>
-      <div class="qrcode">
+      <!-- <p class="content">健康卡拥有6大服务板块，分别针对人体的各个组织进行调整。分别针对人体的各个组织进行调整。分别针对人体的各个组织进行调整。</p> -->
+      <!-- <div class="qrcode">
         <img src="/static/images/fx/qrcode.png" alt="" mode='widthFix' class="img">
         <p class="qrcode-tip">长按识别二维码，马上可以体验健康卡发的服务</p>
-        <button class="btn" type="warn" open-type='share'>马上分享</button>
-      </div>
+      </div> -->
+      <img :src="pageInfo.fx_img" alt="" class="img" mode='widthFix'>
+      <button class="btn" type="warn" open-type='share'>马上分享</button>
 
     </div>
     <div class="intr">
-      <h2 class="title">新零售模式分销说明 :</h2>
+      <img :src="item.url" alt="" v-for="(item,index) in pageInfo.smeta" :key="index" class="img" mode='widthFix'>
+      <!-- <h2 class="title">新零售模式分销说明 :</h2>
       <div class="media">
         <p class="content">亲爱的会员，你还不是分销商，在本店购买产品，消费满980元，即可成为本店的分销商，成为分销商有更多的收益模式，详情查看本页下面的分销说明。</p>
         <img src="/static/images/fx/fx-intr.png" alt="" class="img" mode='widthFix'>
       </div>
       <div class="content">
         <img src="/static/images/fx/info.png" alt="" mode='widthFix' class="img">
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -42,30 +44,63 @@ import ifLoginMixin from "@/mixin/ifLoginMixin";
 
 export default {
   data() {
-    return {};
+    return {
+      pageInfo: {},
+      goodsDetail: ""
+    };
   },
 
   onShow() {
+    var _this = this;
     var scene = this.$root.$mp.appOptions.scene;
     var fid = this.$root.$mp.query.fid;
-    // 判断是否是通过别人分享进入小程序    
-    if(scene == 1007 || scene == 1008){ 
+    // 判断是否是通过别人分享进入小程序
+    if (scene == 1007 || scene == 1008) {
       this.SAVE_FID_SYNC(fid);
-    }else{
+    } else {
       this.CLEAR_FID_SYNC(0);
     }
+    this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/Qian/index").then(res => {
+      console.log(res);
+      _this.pageInfo = res.data[0];
+      wx.setNavigationBarTitle({
+        title: res.data[0].title1
+      });
+    });
+    this.$ajax(
+      "https://jkfx.tianjinliwu.com.cn/index.php?g=Api&m=pro&a=get_product"
+    ).then(res => {
+      console.log(res);
+      this.goodsDetail = res.data.data[0];
+    });
   },
   computed: {},
   methods: {
-    ...mapMutations(['SAVE_FID_SYNC',"CLEAR_FID_SYNC"]),
+    ...mapMutations(["SAVE_FID_SYNC", "CLEAR_FID_SYNC"]),
     buy() {
       var url = "../detail/main?id=3";
       wx.navigateTo({ url });
     }
   },
-  onShareAppMessage() {
+  onShareAppMessage(res) {
     const _this = this;
-    return {};
+    // if (res.from === "button") {
+    //   console.log("转发");
+    //   console.log(this.userDetail);
+      // 来自页面内转发按钮
+      var url;
+      if (this.userDetail.status == 1) {
+        url = "/pages/fenxiao/main?fid=" + this.sessionId;
+        console.log(url);
+      } else if (this.userDetail.status == 0) {
+        url = "/pages/fenxiao/main?fid=" + this.userDetail.fid;
+        console.log(url);
+      }
+      return {
+        path: url,
+        title: _this.goodsDetail.product_name
+      };
+    // }
   },
   mixins: [ifLoginMixin]
 };
@@ -99,6 +134,9 @@ $text-color: "#3A3A3A";
   color: $text-color;
   background: #ffffff;
   margin-bottom: $bot;
+  .img {
+    width: 100%;
+  }
   .userinfo {
     display: flex;
     align-items: center;
@@ -153,6 +191,10 @@ $text-color: "#3A3A3A";
 .intr {
   padding: 20px 15px;
   background: #ffffff;
+  .img {
+    width: 100%;
+    height: auto;
+  }
   .title {
     font-size: 18px;
     margin-bottom: 38px;
@@ -171,8 +213,8 @@ $text-color: "#3A3A3A";
       flex: none;
     }
   }
-  .content{
-    .img{
+  .content {
+    .img {
       width: 100%;
       margin: 10px 0;
     }

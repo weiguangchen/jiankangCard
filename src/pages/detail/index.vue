@@ -15,7 +15,7 @@
         <image src="/static/images/index/jhk-1525856981592@2x.png" class="slide-image" mode='widthFix' />
       </swiper-item>
     </swiper> -->
-    <image :src="goodsDetail.product_img" mode='aspectFit' class="banner" />
+    <image :src="goodsDetail.hot_img" mode='widthFix' class="banner" />
     <!-- 介绍 -->
     <div class="intr">
       <div class="title-wrap">
@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="introduce">
-        <div class="form">
+        <!-- <div class="form">
           <div class="form-item">
             <span>属性1</span>
             <span>介绍1</span>
@@ -44,7 +44,7 @@
             <span>介绍4</span>
           </div>
 
-        </div>
+        </div> -->
         <div class="content" >
           <img :src="item.url" alt="" v-for="(item,index) in goodsDetail.smeta" :key="index" mode='widthFix' class="img"> 
         </div>
@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       goodsDetail: {},
-      goodsId: ""
+      goodsId: "",
     };
   },
 
@@ -141,21 +141,22 @@ export default {
   },
   onShareAppMessage(res) {
     const _this = this;
-    if (res.from === "button") {
-      console.log('转发')
-      console.log(this.userDetail)
+    // if (res.from === "button") {
+    //   console.log('转发')
+    //   console.log(this.userDetail)
       // 来自页面内转发按钮
       var url;
       if (this.userDetail.status == 1) {
         url = "/pages/fenxiao/main?fid=" + this.sessionId;
       } else if (this.userDetail.status == 0) {
-        url = "/pages/fenxiao/main?fid=";
+        url = "/pages/fenxiao/main?fid=" + this.userDetail.fid;
       }
+      console.log(url)
       return {
         path: url,
         title: _this.goodsDetail.product_name
       };
-    }
+    // }
   },
   onLoad() {
     // 获取产品id
@@ -174,9 +175,9 @@ export default {
     // 清空pre_goodsId
     this.CLEAR_PREGOODSID_SYNC();
     // 判断不是分销商不显示转发按钮
-    if (!this.ifFenxiaoshang) {
-      wx.hideShareMenu();
-    }
+    // if (!this.ifFenxiaoshang) {
+    //   wx.hideShareMenu();
+    // }
   },
   computed: {
     ...mapState(["sessionId", "userInfo","userDetail"]),
@@ -218,6 +219,7 @@ export default {
         line-height: 1;
       }
       .rhfx {
+        flex:none;
         font-size: 14px;
         color: #8c8c8c;
       }

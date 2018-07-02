@@ -9,7 +9,7 @@
       </div>
       <div class="info">
         <div class="line">
-          <span class="left">充值账户</span>
+          <span class="left">提现账户</span>
           <span class="right">{{userDetail.nickname}}</span>
         </div>
         <div class="line">
