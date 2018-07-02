@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       goodsDetail: {},
-      goodsId: "",
+      goodsId: ""
     };
   },
 
@@ -144,18 +144,18 @@ export default {
     // if (res.from === "button") {
     //   console.log('转发')
     //   console.log(this.userDetail)
-      // 来自页面内转发按钮
-      var url;
-      if (this.userDetail.status == 1) {
-        url = "/pages/fenxiao/main?fid=" + this.sessionId;
-      } else if (this.userDetail.status == 0) {
-        url = "/pages/fenxiao/main?fid=" + this.userDetail.fid;
-      }
-      console.log(url)
-      return {
-        path: url,
-        title: _this.goodsDetail.product_name
-      };
+    // 来自页面内转发按钮
+    var url;
+    if (this.userDetail.status == 1) {
+      url = "/pages/fenxiao/main?fid=" + this.sessionId;
+    } else if (this.userDetail.status == 0) {
+      url = "/pages/fenxiao/main?fid=" + this.userDetail.fid;
+    }
+    console.log(url);
+    return {
+      path: url,
+      title: _this.goodsDetail.product_name
+    };
     // }
   },
   onLoad() {
@@ -165,6 +165,9 @@ export default {
     wx.request({
       url:
         "https://jkfx.tianjinliwu.com.cn/index.php?g=Api&m=pro&a=get_product",
+      data: {
+        uid:this.sessionId
+      },
       success: res => {
         console.log(res);
         this.goodsDetail = res.data.data[0];
@@ -180,7 +183,7 @@ export default {
     // }
   },
   computed: {
-    ...mapState(["sessionId", "userInfo","userDetail"]),
+    ...mapState(["sessionId", "userInfo", "userDetail"]),
     ...mapGetters(["ifFenxiaoshang"])
   }
 };
@@ -219,7 +222,7 @@ export default {
         line-height: 1;
       }
       .rhfx {
-        flex:none;
+        flex: none;
         font-size: 14px;
         color: #8c8c8c;
       }

@@ -27,7 +27,7 @@
     </div> -->
     <!-- 商品信息 -->
     <div class="goods-info">
-      <div class="title">商品信息：
+      <div class="title"><span class="txt">商品信息：</span>
         <span class="goods">{{goodsDetail.product_name}}/1张</span>
       </div>
       <div class="content">
@@ -97,7 +97,7 @@ export default {
     });
   },
   computed: {
-    ...mapState(['userDetail']),
+    ...mapState(["userDetail"]),
     ...mapGetters(["ifBangding"]),
     ifHasAd() {
       if (this.mr_ad.log == 0) {
@@ -119,7 +119,7 @@ export default {
     // finishReceiptChange(data) {
     //   this.index2 = data;
     // },
-    closeModal(val){
+    closeModal(val) {
       this.showMyModal = val;
       this.checkSessinId();
     },
@@ -135,14 +135,14 @@ export default {
       var _this = this;
 
       if (this.ifBangding) {
-        console.log('绑定了')
+        console.log("绑定了");
         if (this.ifHasAd) {
           var url =
             "../pay/main?price=" +
             this.goodsDetail.product_price +
             "&addressId=" +
             this.mr_ad.id;
-            console.log('跳转支付url：'+url)
+          console.log("跳转支付url：" + url);
           wx.navigateTo({ url });
         } else {
           wx.showModal({
@@ -154,7 +154,7 @@ export default {
           });
         }
       } else {
-        console.log('没绑定')
+        console.log("没绑定");
         this.showMyModal = true;
       }
     },
@@ -169,10 +169,13 @@ export default {
   onLoad() {
     // 获取产品id
     this.goodsId = this.$root.$mp.query.id;
-
+    var _this = this;
     wx.request({
       url:
         "https://jkfx.tianjinliwu.com.cn/index.php?g=Api&m=pro&a=get_product",
+      data: {
+        uid: _this.sessionId
+      },
       success: res => {
         console.log(res);
         this.goodsDetail = res.data.data[0];
@@ -254,6 +257,9 @@ $paddingleft: 15px;
     height: 55px;
     font-size: 17px;
     color: #373737;
+    .txt {
+      flex: none;
+    }
     .goods {
       font-size: 15px;
     }

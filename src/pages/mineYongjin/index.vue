@@ -54,7 +54,7 @@
       <div class="list-item" v-for="(item,index) in list" :key="index" @click="fenxiaoDetail(item.id)">
         <div class="line">
           <span>订单：{{item.order_num}}</span>
-          <span class="date">2018-05-07</span>
+          <span class="date">{{item.pay_time}}</span>
         </div>
         <div class='line'>
           <span>来源：{{item.ly}}

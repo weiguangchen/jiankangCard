@@ -17,11 +17,11 @@
         <button size='mini' type="warn" class="btn" :disabled='item.status == 0 || item.status == 2 || item.status == 3' @click="tuikuan(item.id)">申请退款</button>
         <div class="prices">
           <div class="jiage">共1件商品&nbsp;&nbsp;&nbsp;&nbsp;实付款 :
-            <span class="num">￥{{item.order_price}}</span>
+            <span class="num">￥{{item.order_yue}}</span>
           </div>
           <div class="buy-time">
             <span class="tit">下单时间 :</span>
-            <span>2018-05-21 12:18:33</span>
+            <span>{{item.pay_time}}</span>
           </div>
         </div>
       </div>
@@ -90,7 +90,7 @@ export default {
         success: res => {
           console.log(res);
           _this.goodsDetail = res.data.xq[0];
-          _this.orderList = res.data.list.reverse();
+          _this.orderList = res.data.list;
           wx.stopPullDownRefresh();
         }
       });
