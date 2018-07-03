@@ -31,7 +31,7 @@ export default {
     var _this = this;
     // 动态获取title
 
-    this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/Qian/index").then(res => {
+    this.$ajax(this.$API+"/Api/Qian/index").then(res => {
       console.log(res);
       _this.pageInfo = res.data[0];
       wx.setNavigationBarTitle({
@@ -41,7 +41,7 @@ export default {
     // 获取商品
     wx.request({
       url:
-        "https://jkfx.tianjinliwu.com.cn/index.php?g=Api&m=pro&a=get_product",
+        this.$API+"/index.php?g=Api&m=pro&a=get_product",
       success: res => {
         console.log(res);
         this.goods = res.data.data[0];

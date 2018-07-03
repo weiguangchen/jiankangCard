@@ -83,7 +83,7 @@ export default {
     get_list() {
       var _this = this;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/pay_order_list",
+        url: this.$API+"/Api/userShow/pay_order_list",
         data: {
           uid: _this.sessionId
         },
@@ -98,7 +98,7 @@ export default {
     tuikuan(id) {
       var _this = this;
       wx.showLoading();
-      this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/userShow/order_tui", {
+      this.$ajax(this.$API+"/Api/userShow/order_tui", {
         id
       }).then(
         res => {

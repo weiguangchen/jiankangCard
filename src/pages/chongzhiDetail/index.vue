@@ -39,7 +39,7 @@ export default {
     get_list() {
       var _this = this;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/chongzhi_list",
+        url: this.$API+"/Api/userShow/chongzhi_list",
         data: {
           uid: _this.sessionId
         },

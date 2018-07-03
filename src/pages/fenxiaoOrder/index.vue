@@ -81,7 +81,7 @@ export default {
   onShow() {
     var _this = this;
     // 获取统计信息
-    this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/fxOrder/user_fx_order", {
+    this.$ajax(this.$API+"/Api/fxOrder/user_fx_order", {
       id: _this.sessionId
     }).then(res => {
       _this.total = res.data;
@@ -182,7 +182,7 @@ export default {
       var _this = this;
       var num = 8;
       return this.$ajax(
-        "https://jkfx.tianjinliwu.com.cn/Api/fxOrder/all_fx_order",
+        this.$API+"/Api/fxOrder/all_fx_order1",
         {
           uid: _this.sessionId,
           num,
@@ -202,7 +202,7 @@ export default {
       var _this = this;
       var num = 8;
       return this.$ajax(
-        "https://jkfx.tianjinliwu.com.cn/Api/fxOrder/wjs_order",
+        this.$API+"/Api/fxOrder/wjs_order",
         {
           uid: _this.sessionId,
           num,
@@ -222,7 +222,7 @@ export default {
       var _this = this;
       var num = 8;
       return this.$ajax(
-        "https://jkfx.tianjinliwu.com.cn/Api/fxOrder/yjs_order",
+        this.$API+"/Api/fxOrder/yjs_order",
         {
           uid: _this.sessionId,
           num,
@@ -242,7 +242,7 @@ export default {
       var _this = this;
       var num = 8;
       return this.$ajax(
-        "https://jkfx.tianjinliwu.com.cn/Api/fxOrder/one_fx_order",
+        this.$API+"/Api/fxOrder/one_fx_order",
         {
           uid: _this.sessionId,
           num,
@@ -262,7 +262,7 @@ export default {
       var _this = this;
       var num = 8;
       return this.$ajax(
-        "https://jkfx.tianjinliwu.com.cn/Api/fxOrder/two_fx_order",
+        this.$API+"/Api/fxOrder/two_fx_order",
         {
           uid: _this.sessionId,
           num,

@@ -6,12 +6,13 @@ import store from './store'
 // Vue.use(Mint);
 import '@/utils/scss/global.scss';
 import promiseAjax from '@/utils/ajax.js';
-
+import {API} from '@/utils/config.js';
 Vue.config.productionTip = false
 App.mpType = 'app'
 
 Vue.prototype.$store = store; 
 Vue.prototype.$ajax = promiseAjax;
+Vue.prototype.$API = API;
 const app = new Vue(App)
 app.$mount()
 

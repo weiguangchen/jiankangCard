@@ -126,7 +126,7 @@ export default {
       var NUM = 8; // 每页多少条
       wx.showLoading();
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/user",
+        url: this.$API+"/Api/userShow/user",
         data: {
           uid: _this.sessionId,
           p: _this.fx_p,
@@ -151,7 +151,7 @@ export default {
       const _this = this;
       const NUM = 8;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/one_fxs",
+        url: this.$API+"/Api/userShow/one_fxs",
         data: {
           uid: _this.sessionId,
           num: NUM,
@@ -173,7 +173,7 @@ export default {
       const _this = this;
       const NUM = 8;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/two_fxs",
+        url: this.$API+"/Api/userShow/two_fxs",
         data: {
           uid: _this.sessionId,
           num: NUM,
@@ -181,12 +181,16 @@ export default {
         },
         success: res => {
           console.log(res);
-          _this.fx_count_2 = res.data.count;
-          _this.fx_list = res.data.list;
-          if (res.data.ok == 1) {
-            _this.fx_can_scroll = true;
-          } else {
-            _this.fx_can_scroll = false;
+          if (res.data) {
+            _this.fx_count_2 = res.data.count;
+            _this.fx_list = res.data.list;
+            if (res.data.ok == 1) {
+              _this.fx_can_scroll = true;
+            } else {
+              _this.fx_can_scroll = false;
+            }
+          }else{
+            _this.fx_list = [];
           }
         }
       });
@@ -196,7 +200,7 @@ export default {
       const _this = this;
       wx.showLoading();
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/huiyuan",
+        url: this.$API+"/Api/userShow/huiyuan",
         data: {
           uid: _this.sessionId,
           p: _this.hy_p,
@@ -221,7 +225,7 @@ export default {
       const _this = this;
       const NUM = 8;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/FxOrder/get_one_user",
+        url: this.$API+"/Api/FxOrder/get_one_user",
         data: {
           uid: _this.sessionId,
           num: NUM,
@@ -244,7 +248,7 @@ export default {
       const _this = this;
       const NUM = 8;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/FxOrder/get_two_user",
+        url: this.$API+"/Api/FxOrder/get_two_user",
         data: {
           uid: _this.sessionId,
           num: NUM,
@@ -267,7 +271,7 @@ export default {
     get_boss() {
       var _this = this;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/f_user",
+        url: this.$API+"/Api/userShow/f_user",
         data: {
           uid: _this.sessionId
         },
@@ -291,7 +295,7 @@ export default {
         if (this.selectType_1 == 0) {
           wx.showLoading();
           wx.request({
-            url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/user",
+            url: this.$API+"/Api/userShow/user",
             data: {
               uid: _this.sessionId,
               p: _this.fx_p,
@@ -316,7 +320,7 @@ export default {
         } else if (this.selectType_1 == 1) {
           wx.showLoading();
           wx.request({
-            url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/one_fxs",
+            url: this.$API+"/Api/userShow/one_fxs",
             data: {
               uid: _this.sessionId,
               num: NUM,
@@ -336,7 +340,7 @@ export default {
           });
         } else if (this.selectType_1 == 2) {
           wx.request({
-            url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/two_fxs",
+            url: this.$API+"/Api/userShow/two_fxs",
             data: {
               uid: _this.sessionId,
               num: NUM,
@@ -443,8 +447,8 @@ export default {
     flex: 1;
     display: flex;
     padding-top: 6px;
-      position: relative;
-    z-index:200;
+    position: relative;
+    z-index: 200;
     .nav-text {
       text-align: center;
       font-size: 11px;
@@ -475,7 +479,7 @@ export default {
     .icon {
       position: absolute;
       bottom: 4px;
-      left:50%;
+      left: 50%;
       transform: translateX(-50%);
       z-index: 500;
       width: 60px;

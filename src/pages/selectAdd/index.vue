@@ -37,7 +37,7 @@ export default {
   onShow() {
     var _this = this;
     wx.request({
-      url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/get_adress",
+      url: this.$API+"/Api/userShow/get_adress",
       data: {
         uid: _this.sessionId
       },
@@ -53,7 +53,7 @@ export default {
       console.log(e.mp.detail.value);
       var id = e.mp.detail.value;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/sz_mr_adress",
+        url: this.$API+"/Api/userShow/sz_mr_adress",
         data: {
           uid: _this.sessionId,
           id
@@ -61,7 +61,7 @@ export default {
         success: res => {
           console.log(res);
           wx.request({
-            url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/get_adress",
+            url: this.$API+"/Api/userShow/get_adress",
             data: {
               uid: _this.sessionId
             },
@@ -89,7 +89,7 @@ export default {
         success: res => {
           if (res.confirm) {
             wx.request({
-              url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/delete_adress",
+              url: this.$API+"/Api/userShow/delete_adress",
               data: {
                 id: id
               },
@@ -98,7 +98,7 @@ export default {
                 // _this.adArr.splice(index, 1);
                 wx.request({
                   url:
-                    "https://jkfx.tianjinliwu.com.cn/Api/userShow/get_adress",
+                    this.$API+"/Api/userShow/get_adress",
                   data: {
                     uid: _this.sessionId
                   },

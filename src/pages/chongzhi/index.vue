@@ -46,7 +46,7 @@ export default {
       var _this = this;
       this.buying = true;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_chongzhi",
+        url: this.$API+"/api/WxPay/pay_chongzhi",
         data: {
           id: _this.sessionId,
           total_fee: 1
@@ -89,7 +89,7 @@ export default {
               //   充值成功
               console.log(res);
               wx.request({
-                url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/chongzhi_ok",
+                url: this.$API+"/api/WxPay/chongzhi_ok",
                 data: {
                   uid: _this.sessionId,
                   pay_order_id: pay_order_id

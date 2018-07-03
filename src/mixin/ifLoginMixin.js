@@ -26,7 +26,7 @@ export default {
       wx.showLoading();
       var _this = this;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/GetUser/get_user_id",
+        url: this.$API+"/Api/GetUser/get_user_id",
         data: {
           id: _this.sessionId
         },
@@ -43,7 +43,7 @@ export default {
       var _this = this;
       // 获取用户信息
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/get_userinfo",
+        url: this.$API+"/Api/userShow/get_userinfo",
         data: {
           id: _this.sessionId
         },

@@ -48,7 +48,7 @@ export default {
     var _this = this;
     if (this.addressId) {
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/get_adress",
+        url: this.$API+"/Api/userShow/get_adress",
         data: {
           uid: _this.sessionId,
           id: _this.addressId
@@ -119,7 +119,7 @@ export default {
         if (_this.addressId) {
           // 编辑地址
           wx.request({
-            url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/edit_adress",
+            url: this.$API+"/Api/userShow/edit_adress",
             data: {
               uid: _this.sessionId,
               id: _this.addressId,
@@ -139,7 +139,7 @@ export default {
         } else {
           //   新增地址
           wx.request({
-            url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/add_adress",
+            url: this.$API+"/Api/userShow/add_adress",
             data: {
               id: _this.sessionId,
               name: _this.username,
@@ -152,7 +152,7 @@ export default {
               console.log(res);
               // 判断用户是否有地址信息
               wx.request({
-                url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/get_adress",
+                url: this.$API+"/Api/userShow/get_adress",
                 data: {
                   uid: _this.sessionId
                 },
@@ -168,7 +168,7 @@ export default {
                     // 设置为默认地址
                     wx.request({
                       url:
-                        "https://jkfx.tianjinliwu.com.cn/Api/userShow/sz_mr_adress",
+                        this.$API+"/Api/userShow/sz_mr_adress",
                       data: {
                         uid: _this.sessionId,
                         id: res.data[0].id

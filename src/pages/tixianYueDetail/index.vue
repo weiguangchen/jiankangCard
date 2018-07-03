@@ -41,7 +41,7 @@ export default {
     get_list() {
       var _this = this;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/YjShow/yj_order",
+        url: this.$API+"/Api/YjShow/yj_order",
         data: {
           uid: _this.sessionId
         },

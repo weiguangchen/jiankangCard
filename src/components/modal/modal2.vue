@@ -44,7 +44,7 @@ export default {
     yzmfn() {
       var _this = this;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/Alidayu/alyzm",
+        url: this.$API+"/Api/Alidayu/alyzm",
         data: {
           mobile: _this.userDetail.user_phone
         },

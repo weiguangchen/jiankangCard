@@ -34,7 +34,7 @@ export default {
       var _this = this;
       // 获取用户信息
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/get_userinfo",
+        url: this.$API+"/Api/userShow/get_userinfo",
         data: {
           id: _this.sessionId
         },

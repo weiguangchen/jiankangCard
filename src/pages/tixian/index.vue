@@ -69,7 +69,7 @@ export default {
       var _this =this;
       this.queren = false;
       wx.request({
-        url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/user_tui",
+        url: this.$API+"/Api/userShow/user_tui",
         data: {
           money: _this.money,
           uid: _this.sessionId

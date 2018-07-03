@@ -86,7 +86,7 @@ export default {
   onShow() {
     var _this = this;
     wx.request({
-      url: "https://jkfx.tianjinliwu.com.cn/Api/userShow/moren_adress",
+      url: this.$API+"/Api/userShow/moren_adress",
       data: {
         id: _this.sessionId
       },
@@ -172,7 +172,7 @@ export default {
     var _this = this;
     wx.request({
       url:
-        "https://jkfx.tianjinliwu.com.cn/index.php?g=Api&m=pro&a=get_product",
+        this.$API+"/index.php?g=Api&m=pro&a=get_product",
       data: {
         uid: _this.sessionId
       },

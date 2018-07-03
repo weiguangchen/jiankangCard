@@ -60,7 +60,7 @@ export default {
     } else {
       this.CLEAR_FID_SYNC(0);
     }
-    this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/Qian/index").then(res => {
+    this.$ajax(this.$API+"/Api/Qian/index").then(res => {
       console.log(res);
       _this.pageInfo = res.data[0];
       wx.setNavigationBarTitle({
@@ -68,7 +68,7 @@ export default {
       });
     });
     this.$ajax(
-      "https://jkfx.tianjinliwu.com.cn/index.php?g=Api&m=pro&a=get_product"
+      this.$API+"/index.php?g=Api&m=pro&a=get_product"
     ).then(res => {
       console.log(res);
       this.goodsDetail = res.data.data[0];

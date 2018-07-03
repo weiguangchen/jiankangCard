@@ -8,10 +8,10 @@
           <div class="num">{{total.yjs_money || 0}}</div>
           <div class="tit">已结算佣金(￥)</div>
         </div>
-        <div class="num-item">
+        <!-- <div class="num-item">
           <div class="num">{{total.wjs_money || 0}}</div>
           <div class="tit">未结算佣金(￥)</div>
-        </div>
+        </div> -->
       </div>
       <div class="tixian">
         <div class="left">
@@ -54,16 +54,16 @@
       <div class="list-item" v-for="(item,index) in list" :key="index" @click="fenxiaoDetail(item.id)">
         <div class="line">
           <span>订单：{{item.order_num}}</span>
-          <span class="date">{{item.pay_time}}</span>
+          <span class="date">{{item.date}}</span>
         </div>
         <div class='line'>
-          <span>来源：{{item.ly}}
-            <span class="status status-warn" v-if="item.status == 0">[已退款]</span>
+          <span>详情{{item.content}}
+            <!-- <span class="status status-warn" v-if="item.status == 0">[已退款]</span>
             <span class="status status-warn" v-else-if="item.status == 1">[未结算]</span>
             <span class="status status-success" v-else-if='item.status == 2'>[已结算]</span>
-            <span class="status status-warn" v-else-if='item.status == 3'>[申请退款中]</span>
+            <span class="status status-warn" v-else-if='item.status == 3'>[申请退款中]</span> -->
           </span>
-          <span class="money">+{{item.zj}}</span>
+          <!-- <span class="money">+{{item.zj}}</span> -->
         </div>
       </div>
       <div v-if='!more' class="nomore">暂无数据</div>
@@ -89,7 +89,7 @@ export default {
   onShow() {
     var _this = this;
     // 获取统计信息
-    this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/YjShow/yj", {
+    this.$ajax(this.$API+"/Api/YjShow/yj", {
       uid: _this.sessionId
     }).then(res => {
       console.log(res);
@@ -121,7 +121,7 @@ export default {
       var num = 8;
       var _this = this;
       return this.$ajax(
-        "https://jkfx.tianjinliwu.com.cn/Api/fxOrder/all_fx_order",
+        this.$API+"/Api/fxOrder/all_fx_order",
         {
           uid: _this.sessionId,
           num,
@@ -287,9 +287,9 @@ export default {
     margin-bottom: $bot;
     padding: 10px 15px;
     box-sizing: border-box;
-    height: 60px;
+    // height: 60px;
     background: #ffffff;
-    line-height: 1;
+    line-height: 2;
     font-size: 13px;
     .line {
       display: flex;

@@ -78,7 +78,7 @@ export default {
         this.buying = true;
         // 微信支付
         wx.request({
-          url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay",
+          url: this.$API+"/api/WxPay/pay",
           data: {
             id: _this.sessionId,
             zong: _this.price,
@@ -124,7 +124,7 @@ export default {
                 console.log(res);
                 // 支付成功修改数据库订单状态
                 wx.request({
-                  url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_ok",
+                  url: this.$API+"/api/WxPay/pay_ok",
                   data: {
                     pay_order_id: pay_order_id
                   },
@@ -154,7 +154,7 @@ export default {
               if (res.confirm) {
                 wx.showLoading();
                 wx.request({
-                  url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/yue_pay",
+                  url: this.$API+"/api/WxPay/yue_pay",
                   data: {
                     id: _this.sessionId,
                     yue: _this.price,
@@ -164,7 +164,7 @@ export default {
                     console.log(res);
                     var pay_order_id = res.data.pay_order_id;
                     wx.request({
-                      url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_ok",
+                      url: this.$API+"/api/WxPay/pay_ok",
                       data: {
                         pay_order_id: pay_order_id
                       },
@@ -193,7 +193,7 @@ export default {
           this.buying = true;
           // 余额不足
           wx.request({
-            url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay",
+            url: this.$API+"/api/WxPay/pay",
             data: {
               id: _this.sessionId,
               zong: _this.price,
@@ -237,7 +237,7 @@ export default {
                   console.log(res);
                   // 支付成功修改数据库订单状态
                   wx.request({
-                    url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_ok",
+                    url: this.$API+"/api/WxPay/pay_ok",
                     data: {
                       pay_order_id: pay_order_id
                     },
@@ -259,7 +259,7 @@ export default {
               if (res.confirm) {
                 wx.showLoading();
                 wx.request({
-                  url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/yue_pay",
+                  url: this.$API+"/api/WxPay/yue_pay",
                   data: {
                     id: _this.sessionId,
                     yue: _this.price,
@@ -268,7 +268,7 @@ export default {
                   success: function(res) {
                     var pay_order_id = res.data.pay_order_id;
                     wx.request({
-                      url: "https://jkfx.tianjinliwu.com.cn/api/WxPay/pay_ok",
+                      url: this.$API+"/api/WxPay/pay_ok",
                       data: {
                         pay_order_id: pay_order_id
                       },

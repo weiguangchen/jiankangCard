@@ -60,7 +60,7 @@ export default {
       // console.log(parseInt(this.money) < parseInt(this.yj))
       if (parseInt(this.money) < parseInt(this.yj)) {
         // 余额大于提现金额，可以提现
-        this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/YjShow/yj_yue", {
+        this.$ajax(this.$API+"/Api/YjShow/yj_yue", {
           uid: _this.sessionId,
           yj: _this.money
         }).then(res => {
@@ -92,7 +92,7 @@ export default {
   onShow() {
     var _this = this;
     // 获取统计信息
-    this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/YjShow/yj", {
+    this.$ajax(this.$API+"/Api/YjShow/yj", {
       uid: _this.sessionId
     }).then(res => {
       console.log(res);

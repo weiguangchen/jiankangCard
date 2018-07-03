@@ -70,7 +70,7 @@ export default {
         });
       } else {
         wx.request({
-          url: "https://jkfx.tianjinliwu.com.cn/Api/Alidayu/alyzm",
+          url: this.$API+"/Api/Alidayu/alyzm",
           data: {
             mobile: _this.phone
           },
@@ -128,7 +128,7 @@ export default {
           }
         });
       } else {
-        this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/userShow/ws", {
+        this.$ajax(this.$API+"/Api/userShow/ws", {
           uid: _this.sessionId,
           user_name: _this.realName,
           user_phone: _this.phone

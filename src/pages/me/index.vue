@@ -92,7 +92,7 @@ export default {
     // 获取商品
     wx.request({
       url:
-        "https://jkfx.tianjinliwu.com.cn/index.php?g=Api&m=pro&a=get_product",
+        this.$API+"/index.php?g=Api&m=pro&a=get_product",
       success: res => {
         console.log(res);
         this.goods = res.data.data[0];
@@ -143,7 +143,7 @@ export default {
                 // 用户登录
                 wx.request({
                   url:
-                    "https://jkfx.tianjinliwu.com.cn/index.php?g=Api&m=GetUser&a=get_sk",
+                    this.$API+"/index.php?g=Api&m=GetUser&a=get_sk",
                   data: {
                     code: res.code,
                     encryptedData,

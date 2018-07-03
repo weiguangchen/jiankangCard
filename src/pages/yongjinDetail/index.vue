@@ -65,7 +65,7 @@ export default {
     var _this = this;
     var id = this.$root.$mp.query.id;
     var type = this.$root.$mp.query.type;    /* 1为订单详情2为佣金详情 */
-    this.$ajax("https://jkfx.tianjinliwu.com.cn/Api/fxOrder/order_content", {
+    this.$ajax(this.$API+"/Api/fxOrder/order_content", {
       id
     }).then(res => {
       console.log(res);
