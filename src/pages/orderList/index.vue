@@ -17,7 +17,7 @@
         <button size='mini' type="warn" class="btn" :disabled='item.status == 0 || item.status == 2 || item.status == 3' @click="tuikuan(item.id)">申请退款</button>
         <div class="prices">
           <div class="jiage">共1件商品&nbsp;&nbsp;&nbsp;&nbsp;实付款 :
-            <span class="num">￥{{item.order_yue}}</span>
+            <span class="num">￥{{item.order_price}}</span>
           </div>
           <div class="buy-time">
             <span class="tit">下单时间 :</span>
