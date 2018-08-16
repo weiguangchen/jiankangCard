@@ -100,43 +100,54 @@ export default {
     buy() {
       var _this = this;
       var url = "../me/main";
-      if (this.sessionId) {
-        // 缓存中有id
-        // 判断id是否可用
-        this.sessionIdIfTimeOut(function() {
-          if (_this.sessionIsOk == 1) {
-            // id可用
-            var url = "../order/main" + "?id=" + _this.goodsId;
-            wx.navigateTo({ url });
-          } else if (_this.sessionIsOk == 0) {
-            // id不存在
-            // 跳转登录
-            wx.showModal({
-              title: "授权失效",
-              content: "请重新授权登录",
-              success: res => {
-                if (res.confirm) {
-                  wx.switchTab({ url });
-                  _this.SAVE_PREGOODSID_SYNC(_this.goodsId);
-                }
-              }
-            });
-          }
-        });
-      } else {
-        // 缓存中无id
-        // 跳转登录
-        wx.showModal({
-          title: "提示",
-          content: "请授权登录",
-          success: res => {
-            if (res.confirm) {
-              wx.switchTab({ url });
-              _this.SAVE_PREGOODSID_SYNC(_this.goodsId);
-            }
-          }
-        });
-      }
+
+      // wx.getLocation({
+      //   success(res){
+      //     console.log(res)
+      //   }
+      // })
+      wx.openLocation({
+        latitude:39.12827,
+        longitude:117.25228
+      })
+
+      // if (this.sessionId) {
+      //   // 缓存中有id
+      //   // 判断id是否可用
+      //   this.sessionIdIfTimeOut(function() {
+      //     if (_this.sessionIsOk == 1) {
+      //       // id可用
+      //       var url = "../order/main" + "?id=" + _this.goodsId;
+      //       wx.navigateTo({ url });
+      //     } else if (_this.sessionIsOk == 0) {
+      //       // id不存在
+      //       // 跳转登录
+      //       wx.showModal({
+      //         title: "授权失效",
+      //         content: "请重新授权登录",
+      //         success: res => {
+      //           if (res.confirm) {
+      //             wx.switchTab({ url });
+      //             _this.SAVE_PREGOODSID_SYNC(_this.goodsId);
+      //           }
+      //         }
+      //       });
+      //     }
+      //   });
+      // } else {
+      //   // 缓存中无id
+      //   // 跳转登录
+      //   wx.showModal({
+      //     title: "提示",
+      //     content: "请授权登录",
+      //     success: res => {
+      //       if (res.confirm) {
+      //         wx.switchTab({ url });
+      //         _this.SAVE_PREGOODSID_SYNC(_this.goodsId);
+      //       }
+      //     }
+      //   });
+      // }
     }
   },
   onShareAppMessage(res) {
