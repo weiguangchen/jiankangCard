@@ -49,7 +49,7 @@ export default {
         url: this.$API+"/api/WxPay/pay_chongzhi",
         data: {
           id: _this.sessionId,
-          total_fee: 1
+          total_fee: _this.money
         },
         success: function(res) {
           console.log(res);
