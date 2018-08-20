@@ -19,6 +19,8 @@ export default {
     return {
       goods: {},
       pageInfo: {},
+      num:8,
+      p:1
     };
   },
 
@@ -41,7 +43,11 @@ export default {
     // 获取商品
     wx.request({
       url:
-        this.$API+"/index.php?g=Api&m=pro&a=get_product",
+        this.$API+"/Api/Pro/get_pro",
+        data:{
+          num:8,
+          p:this.p
+        },
       success: res => {
         console.log(res);
         this.goods = res.data.data[0];
