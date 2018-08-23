@@ -64,8 +64,12 @@
         <span>我的佣金</span>
         <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
       </div>
-      <div class="cell last-cell" @click="fenxiaoOrder">
+      <div class="cell" @click="fenxiaoOrder">
         <span>分销订单</span>
+        <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
+      </div>
+      <div class="cell last-cell" @click="tuiguang">
+        <span>我的推广</span>
         <img src="/static/images/arrow.png" alt="" mode='widthFix' class="img">
       </div>
     </div>
@@ -74,327 +78,355 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import ifLoginMixin from "@/mixin/ifLoginMixin";
+  import {
+    mapState,
+    mapGetters,
+    mapMutations,
+    mapActions
+  } from "vuex";
+  import ifLoginMixin from "@/mixin/ifLoginMixin";
 
-import myModal from "@/components/modal/modal";
-export default {
-  data() {
-    return {
-      modalShow: false,
-      goods: {}
-    };
-  },
-  onShow() {
-    var canIUse = wx.canIUse("button.open-type.getUserInfo");
-    console.log(canIUse);
+  import myModal from "@/components/modal/modal";
+  export default {
+    data() {
+      return {
+        modalShow: false,
+      };
+    },
+    onLoad() {
 
-    // 获取商品
-    wx.request({
-      url:
-        this.$API+"/index.php?g=Api&m=pro&a=get_product",
-      success: res => {
-        console.log(res);
-        this.goods = res.data.data[0];
-      }
-    });
-  },
-  computed: {
-    ...mapState(["fid", "pre_goodsId"]),
-    ...mapGetters(["ifLogin"]),
-    fenxiaoshang() {
-      if (this.ifFenxiaoshang) {
-        return "分销商";
+
+      var scene = this.$root.$mp.appOptions.scene;
+      var fid = this.$root.$mp.query.fid;
+      var userId = this.$root.$mp.query.userId;
+      if (scene == 1007 || scene == 1008) {
+        if (!fid) {
+          //   分享者为分销商
+          this.SAVE_FID_SYNC('');
+          this.SAVE_UID_SYNC(userId);
+        } else {
+          //   分享者为会员
+          this.SAVE_FID_SYNC(fid);
+          this.SAVE_UID_SYNC(userId);
+        }
       } else {
-        return "普通会员";
+        //   清空
+        this.SAVE_FID_SYNC('');
+        this.SAVE_UID_SYNC('')
       }
-    }
-  },
-  methods: {
-    ...mapActions(["SAVE_SESSIONID", "SAVE_USERINFO"]),
-    ...mapMutations(["CLEAR_FID_SYNC"]),
-    getUserInfo(res) {
-      var _this = this;
-      wx.getSetting({
-        success: res => {
-          console.log("授权列表");
-          console.log(res);
-        }
-      });
-      console.log("获取权限");
-      console.log(res);
-      if (res.mp.detail.errMsg == "getUserInfo:ok") {
-        wx.showLoading();
-        // console.log("授权了");
-        // 获取用户信息授权
+
+    },
+    onShow() {
+      var canIUse = wx.canIUse("button.open-type.getUserInfo");
+      console.log(canIUse);
+
+      if (!this.sessionId) {
+        wx.hideShareMenu();
+      } else {
+        wx.showShareMenu();
+      }
+    },
+    computed: {
+      ...mapState(["shareFid", "shareUserId", "pre_goodsId"]),
+      ...mapGetters(["ifLogin"]),
+      fenxiaoshang() {
+        return this.ifFenxiaoshang ? "分销商" : "普通会员";
+      }
+    },
+    methods: {
+      ...mapActions(["SAVE_SESSIONID", "SAVE_USERINFO"]),
+      ...mapMutations(["SAVE_FID_SYNC", "SAVE_UID_SYNC"]),
+      getUserInfo(res) {
+        var _this = this;
+        wx.getSetting({
+          success: res => {
+            console.log("授权列表");
+            console.log(res);
+          }
+        });
+        console.log("获取权限");
         console.log(res);
-        // 存储用户信息到微信缓存
-        this.SAVE_USERINFO_SYNC(res.mp.detail.userInfo);
-        var encryptedData = res.mp.detail.encryptedData;
-        // 替换加号防止ajax传输+变为空格
-        encryptedData = encryptedData.replace(/\+/g, "%2B");
-        var iv = res.mp.detail.iv;
-        iv = iv.replace(/\+/g, "%2B");
-        if (!this.ifLogin) {
-          wx.login({
-            success: res => {
-              console.log(res);
-              if (res.code) {
-                // 用户登录
-                wx.request({
-                  url:
-                    this.$API+"/index.php?g=Api&m=GetUser&a=get_sk",
-                  data: {
-                    code: res.code,
-                    encryptedData,
-                    iv,
-                    fid: _this.fid
-                  },
-                  success: res => {
-                    console.log(res);
-                    // 登陆成功
-                    if (res.statusCode == 200) {
-                      _this.SAVE_SESSIONID(res.data.a);
+        if (res.mp.detail.errMsg == "getUserInfo:ok") {
+          wx.showLoading();
+          // console.log("授权了");
+          // 获取用户信息授权
+          console.log(res);
+          // 存储用户信息到微信缓存
+          this.SAVE_USERINFO_SYNC(res.mp.detail.userInfo);
+
+          // 替换加号防止ajax传输+变为空格
+          var encryptedData = res.mp.detail.encryptedData;
+          encryptedData = encryptedData.replace(/\+/g, "%2B");
+          var iv = res.mp.detail.iv;
+          iv = iv.replace(/\+/g, "%2B");
+          if (!this.ifLogin) {
+            wx.login({
+              success: res => {
+                console.log(res);
+                if (res.code) {
+                  // 用户登录
+                  wx.request({
+                    url: this.$API + "/index.php?g=Api&m=GetUser&a=get_sk",
+                    data: {
+                      code: res.code,
+                      encryptedData,
+                      iv,
+                      fid: _this.shareFid,
+                      user_id: _this.shareUserId
+                    },
+                    success: res => {
+                      console.log(res);
+                      // 登陆成功
+                      if (res.statusCode == 200) {
+                        _this.SAVE_SESSIONID(res.data.a);
+                      }
+
+                      _this.getUserDetail();
+                      _this.SAVE_FID_SYNC('');
+                      _this.SAVE_UID_SYNC('');
+                      wx.hideLoading();
+
+                      //  如果是从商品页跳转过来，登录成功后返回商品页
+                      // var goodsId = _this.pre_goodsId;
+                      // if (goodsId) {
+                      //   var url = "../detail/main?id=" + goodsId;
+                      //   wx.navigateTo({ url });
+                      // }
                     }
-
-                    _this.getUserDetail();
-                    wx.hideLoading();
-
-                    //  如果是从商品页跳转过来，登录成功后返回商品页
-                    // var goodsId = _this.pre_goodsId;
-                    // if (goodsId) {
-                    //   var url = "../detail/main?id=" + goodsId;
-                    //   wx.navigateTo({ url });
-                    // }
-                  }
-                });
+                  });
+                }
               }
-            }
-          });
+            });
+          }
+        } else if (res.mp.detail.errMsg == "getUserInfo:fail auth deny") {
+          // console.log("拒绝了");
         }
-      } else if (res.mp.detail.errMsg == "getUserInfo:fail auth deny") {
-        // console.log("拒绝了");
+      },
+      chongzhi() {
+        var url = "../chongzhi/main";
+        wx.navigateTo({
+          url
+        });
+      },
+      tixian() {
+        var url = "../tixian/main";
+        wx.navigateTo({
+          url
+        });
+      },
+      order_list() {
+        var url = "../orderList/main";
+        wx.navigateTo({
+          url
+        });
+      },
+      team() {
+        var url = "../team/main";
+        wx.navigateTo({
+          url
+        });
+      },
+      fenxiaoOrder() {
+        var url = "../fenxiaoOrder/main";
+        wx.navigateTo({
+          url
+        });
+      },
+      tuiguang(){
+        var url = "../tuiguang/main";
+        wx.navigateTo({
+          url
+        });
+      },
+      mineYongjin() {
+        var url = "../mineYongjin/main";
+        wx.navigateTo({
+          url
+        });
       }
     },
-    chongzhi() {
-      var url = "../chongzhi/main";
-      wx.navigateTo({ url });
+
+    onPullDownRefresh() {
+      this.getUserDetail();
     },
-    tixian() {
-      var url = "../tixian/main";
-      wx.navigateTo({ url });
+
+    components: {
+      myModal
     },
-    order_list() {
-      var url = "../orderList/main";
-      wx.navigateTo({ url });
+    onShareAppMessage(res) {
+      const _this = this;
+      // if (res.from === "button") {
+      //   console.log("转发");
+      //   console.log(this.userDetail);
+      // 来自页面内转发按钮
+      var url;
+      if (this.userDetail.status == 1) {
+        url = "/pages/fenxiao/main?userId=" + this.sessionId;
+        console.log(url);
+      } else if (this.userDetail.status == 0) {
+        url = "/pages/fenxiao/main?fid=" + this.userDetail.fid + "&userId=" + this.sessionId;
+        console.log(url);
+      }
+      return {
+        path: url,
+        title: _this.goods.product_name
+      };
+      // }
     },
-    team() {
-      var url = "../team/main";
-      wx.navigateTo({ url });
-    },
-    fenxiaoOrder() {
-      var url = "../fenxiaoOrder/main";
-      wx.navigateTo({ url });
-    },
-    mineYongjin() {
-      var url = "../mineYongjin/main";
-      wx.navigateTo({ url });
-    }
-  },
-  onHide() {
-    this.CLEAR_FID_SYNC();
-  },
-  onPullDownRefresh() {
-    this.getUserDetail();
-  },
-  // onLoad() {
-  //   // wx.getUserInfo({
-  //   //   success: res => {
-  //   //     // console.log(res);
-  //   //     this.userInfo = res.userInfo;
-  //   //   }
-  //   // });
-  //   // 获取sessionid
-  //   // var sessionid = wx.getStorageSync("sessionid");
-  // },
-  components: {
-    myModal
-  },
-  onShareAppMessage(res) {
-    const _this = this;
-    // if (res.from === "button") {
-    //   console.log("转发");
-    //   console.log(this.userDetail);
-    // 来自页面内转发按钮
-    var url;
-    if (this.userDetail.status == 1) {
-      url = "/pages/fenxiao/main?fid=" + this.sessionId;
-      console.log(url);
-    } else if (this.userDetail.status == 0) {
-      url = "/pages/fenxiao/main?fid=" + this.userDetail.fid;
-      console.log(url);
-    }
-    return {
-      path: url,
-      title: _this.goods.product_name
-    };
-    // }
-  },
-  mixins: [ifLoginMixin]
-};
+    mixins: [ifLoginMixin]
+  };
+
 </script>
 
 <style lang='scss'>
-.person-info {
-  color: #ffffff;
-  height: 181px;
-  display: flex;
-  margin-bottom: $bot;
-  .info-bg {
-    position: absolute;
-    width: 100%;
-  }
-  .person-content,
-  .person-content-noLogin {
-    z-index: 100;
+  .person-info {
+    color: #ffffff;
+    height: 181px;
     display: flex;
-    flex: auto;
-  }
-  .person-content {
-    .person-box,
-    .info {
-      // width: 50%;
-      // flex: none;
+    margin-bottom: $bot;
+    .info-bg {
+      position: absolute;
+      width: 100%;
     }
-    .person-box {
-      flex: 1;
+    .person-content,
+    .person-content-noLogin {
+      z-index: 100;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      .avatar {
-        width: 83px;
-        height: 83px;
-        border-radius: 50%;
-        margin-bottom: 9px;
-      }
-      .username {
-        font-size: 18px;
-        margin-bottom: 9px;
-      }
-      .level {
-        font-size: 12px;
-      }
+      flex: auto;
     }
-    .info {
-      line-height: 1;
-      width: 165px;
-      flex: none;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      .balance {
-        font-size: 18px;
-        margin-bottom: 14px;
-        margin-left: 6px;
+    .person-content {
+      .person-box,
+      .info {
+        // width: 50%;
+        // flex: none;
       }
-      .count {
-        font-size: 30px;
-        margin-bottom: 16px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      .handle {
+      .person-box {
+        flex: 1;
         display: flex;
-        padding-left: 6px;
-        button {
-          color: #ffffff;
-          width: 48px;
-          height: 23px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .avatar {
+          width: 83px;
+          height: 83px;
+          border-radius: 50%;
+          margin-bottom: 9px;
+        }
+        .username {
+          font-size: 18px;
+          margin-bottom: 9px;
+        }
+        .level {
           font-size: 12px;
-          border: 1px solid #ffffff;
-          background: transparent;
-          margin: 0 16px 0 0;
-          padding: 0;
-          flex: none;
+        }
+      }
+      .info {
+        line-height: 1;
+        width: 165px;
+        flex: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        .balance {
+          font-size: 18px;
+          margin-bottom: 14px;
+          margin-left: 6px;
+        }
+        .count {
+          font-size: 30px;
+          margin-bottom: 16px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .handle {
           display: flex;
-          justify-content: center;
-          align-items: center;
+          padding-left: 6px;
+          button {
+            color: #ffffff;
+            width: 48px;
+            height: 23px;
+            font-size: 12px;
+            border: 1px solid #ffffff;
+            background: transparent;
+            margin: 0 16px 0 0;
+            padding: 0;
+            flex: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+      }
+    }
+    .person-content-noLogin {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      .defalut-avatar {
+        width: 84px;
+        height: 84px;
+        margin-bottom: 15px;
+      }
+      .wxLogin {
+        width: 219px;
+        height: 35px;
+        line-height: 35px;
+      }
+    }
+  }
+
+  .dingdan {
+    background: #ffffff;
+    height: 135px;
+    margin-bottom: $bot;
+    .title {
+      padding: 12px 15px 0;
+      line-height: 1;
+      margin-bottom: 29px;
+      @extend %fontsize;
+    }
+    .menu {
+      display: flex;
+      .menu-item {
+        font-size: 15px;
+        color: #3a3a3a;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        img {
+          width: 26px;
+          flex: none;
+          margin-bottom: 18px;
+        }
+        span {
+          line-height: 1;
         }
       }
     }
   }
-  .person-content-noLogin {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    .defalut-avatar {
-      width: 84px;
-      height: 84px;
-      margin-bottom: 15px;
-    }
-    .wxLogin {
-      width: 219px;
-      height: 35px;
-      line-height: 35px;
-    }
-  }
-}
 
-.dingdan {
-  background: #ffffff;
-  height: 135px;
-  margin-bottom: $bot;
-  .title {
-    padding: 12px 15px 0;
-    line-height: 1;
-    margin-bottom: 29px;
-    @extend %fontsize;
-  }
-  .menu {
-    display: flex;
-    .menu-item {
-      font-size: 15px;
-      color: #3a3a3a;
-      flex: 1;
+  .menu-list {
+    .cell {
+      background: #ffffff;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      img {
-        width: 26px;
-        flex: none;
-        margin-bottom: 18px;
-      }
+      justify-content: space-between;
+      height: 49px;
+      padding: 0 15px;
+      border-bottom: 1px solid #cccccc;
       span {
-        line-height: 1;
+        @extend %fontsize;
+      }
+      .img {
+        width: 11px;
+        flex: none;
       }
     }
+    .last-cell {
+      border-bottom: none;
+    }
   }
-}
 
-.menu-list {
-  .cell {
-    background: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 49px;
-    padding: 0 15px;
-    border-bottom: 1px solid #cccccc;
-    span {
-      @extend %fontsize;
-    }
-    .img {
-      width: 11px;
-      flex: none;
-    }
-  }
-  .last-cell {
-    border-bottom: none;
-  }
-}
 </style>
-
-
-

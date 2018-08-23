@@ -1,30 +1,12 @@
 const getters = {
   ifLogin: state => {
-    if (state.sessionId) {
-      return true;
-    } else {
-      return false;
-    }
+    return state.sessionId?true:false;
   },
   ifFenxiaoshang: state => {
-    if (state.userDetail.status == 1) {
-      // 是分销商
-      return true;
-    } else if (state.userDetail.status == 0) {
-      // 不是分销商
-      return false;
-    }
+    return state.userDetail.status == 1?true:false;
   },
   ifBangding: state => {
-    // if ('bangding' in this.userDetail) {
-      if (state.userDetail.bangding == 1) {
-        // 已绑定
-        return true;
-      } else if (state.userDetail.bangding == 0) {
-        // 未绑定
-        return false;
-      }
-    // }
+    return state.userDetail.bangding == 1?true:false;
   },
   isSend:state=>{
     // var now = new Date().getTime.toString().substr(0,10);

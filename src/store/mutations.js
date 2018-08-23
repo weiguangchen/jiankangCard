@@ -14,12 +14,10 @@ const mutations = {
         state.userInfo = ''
     },
 
-    SAVE_PREGOODSID_SYNC(state,preload){
+    SET_PREGOODSID_SYNC(state,preload){
         state.pre_goodsId = preload;
     },
-    CLEAR_PREGOODSID_SYNC(state){
-        state.pre_goodsId = '';
-    },
+
 
     SAVE_USERDETAIL_SYNC(state,preload){
         state.userDetail = preload;
@@ -29,11 +27,14 @@ const mutations = {
     },
 
     SAVE_FID_SYNC(state,preload){
-        state.fid = preload;
+        state.shareFid = preload;
     },
-    CLEAR_FID_SYNC(state,preload){
-        state.fid = 0;
+    SAVE_UID_SYNC(state,preload){
+        state.shareUserId = preload;
     },
+    // CLEAR_FID_SYNC(state,preload){
+    //     state.fid = 0;
+    // },
 
     // 设置验证码倒计时
     SAVE_ISSEND(state,preload){
@@ -50,6 +51,11 @@ const mutations = {
     SET_SESSIONISOK_SYNC(state,preload){
         state.sessionIsOk = preload;
     },
+
+    // 设置用户地址
+    SET_AD(state,preload){
+        state.user_ad = preload;
+    }
 }
 
 

@@ -44,7 +44,8 @@ export default {
       payType: "",
       buying: false,
       price: "" /* 商品价格 */,
-      addressId: "" /* 收货地址id */
+      addressId: "" /* 收货地址id */,
+      goodsId:''    /* 商品id */
     };
   },
 
@@ -55,11 +56,6 @@ export default {
       } else {
         return false;
       }
-      // if (this.payType == "") {
-      //   return false;
-      // } else {
-      //   return true;
-      // }
     },
     format_yue(price) {
       var yue = this.userDetail;
@@ -83,7 +79,8 @@ export default {
             id: _this.sessionId,
             zong: _this.price,
             yue: 0,
-            adress: _this.addressId
+            adress: _this.addressId,
+            product_id:_this.goodsId
           },
           success: function(res) {
             _this.buying = false;
@@ -124,7 +121,7 @@ export default {
                 console.log(res);
                 // 支付成功修改数据库订单状态
                 wx.request({
-                  url: this.$API+"/api/WxPay/pay_ok",
+                  url: _this.$API+"/api/WxPay/pay_ok",
                   data: {
                     pay_order_id: pay_order_id
                   },
@@ -158,13 +155,15 @@ export default {
                   data: {
                     id: _this.sessionId,
                     yue: _this.price,
-                    adress: _this.addressId
+                    adress: _this.addressId,
+                    product_id:_this.goodsId
+
                   },
                   success: function(res) {
                     console.log(res);
                     var pay_order_id = res.data.pay_order_id;
                     wx.request({
-                      url: this.$API+"/api/WxPay/pay_ok",
+                      url: _this.$API+"/api/WxPay/pay_ok",
                       data: {
                         pay_order_id: pay_order_id
                       },
@@ -198,7 +197,8 @@ export default {
               id: _this.sessionId,
               zong: _this.price,
               yue: _this.userDetail.money,
-              adress: _this.addressId
+              adress: _this.addressId,
+              product_id:_this.goodsId
             },
             success: function(res) {
               _this.buying = false;
@@ -237,7 +237,7 @@ export default {
                   console.log(res);
                   // 支付成功修改数据库订单状态
                   wx.request({
-                    url: this.$API+"/api/WxPay/pay_ok",
+                    url: _this.$API+"/api/WxPay/pay_ok",
                     data: {
                       pay_order_id: pay_order_id
                     },
@@ -268,7 +268,7 @@ export default {
                   success: function(res) {
                     var pay_order_id = res.data.pay_order_id;
                     wx.request({
-                      url: this.$API+"/api/WxPay/pay_ok",
+                      url: _this.$API+"/api/WxPay/pay_ok",
                       data: {
                         pay_order_id: pay_order_id
                       },
@@ -304,6 +304,7 @@ export default {
   onLoad() {
     this.price = this.$root.$mp.query.price;
     this.addressId = this.$root.$mp.query.addressId;
+    this.goodsId = this.$root.$mp.query.goodsId;
   },
   onUnload(){
     this.buying = false

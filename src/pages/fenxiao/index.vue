@@ -8,7 +8,7 @@
         <h2 class="title">温馨提示 : </h2>
         <p class="content">{{pageInfo.product_content}}</p>
       </div>
-      <button class="btn" type="warn" @click='buy'>购买</button>
+      <button class="btn" type="warn" @click='buy'>分享</button>
     </template>
     <div class="introduce" v-else>
       <div class="userinfo">
@@ -39,185 +39,233 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import ifLoginMixin from "@/mixin/ifLoginMixin";
-
-export default {
-  data() {
-    return {
-      pageInfo: {},
-      goodsDetail: ""
-    };
-  },
-
-  onShow() {
-    var _this = this;
-    var scene = this.$root.$mp.appOptions.scene;
-    var fid = this.$root.$mp.query.fid;
-    // 判断是否是通过别人分享进入小程序
-    if (scene == 1007 || scene == 1008) {
-      this.SAVE_FID_SYNC(fid);
-    } else {
-      this.CLEAR_FID_SYNC(0);
-    }
-    this.$ajax(this.$API+"/Api/Qian/index").then(res => {
-      console.log(res);
-      _this.pageInfo = res.data[0];
-      wx.setNavigationBarTitle({
-        title: res.data[0].title1
-      });
-    });
-    this.$ajax(
-      this.$API+"/index.php?g=Api&m=pro&a=get_product"
-    ).then(res => {
-      console.log(res);
-      this.goodsDetail = res.data.data[0];
-    });
-  },
-  computed: {},
-  methods: {
-    ...mapMutations(["SAVE_FID_SYNC", "CLEAR_FID_SYNC"]),
-    buy() {
-      var url = "../detail/main?id=3";
-      wx.navigateTo({ url });
-    }
-  },
-  onShareAppMessage(res) {
-    const _this = this;
-    // if (res.from === "button") {
-    //   console.log("转发");
-    //   console.log(this.userDetail);
-      // 来自页面内转发按钮
-      var url;
-      if (this.userDetail.status == 1) {
-        url = "/pages/fenxiao/main?fid=" + this.sessionId;
-        console.log(url);
-      } else if (this.userDetail.status == 0) {
-        url = "/pages/fenxiao/main?fid=" + this.userDetail.fid;
-        console.log(url);
-      }
+  import {
+    mapState,
+    mapGetters,
+    mapMutations,
+    mapActions
+  } from "vuex";
+  import ifLoginMixin from "@/mixin/ifLoginMixin";
+  import QQMapWX from '../../../static/js/qqmap-wx-jssdk.min.js'
+  export default {
+    data() {
       return {
-        path: url,
-        title: _this.goodsDetail.product_name
+        pageInfo: {},
       };
-    // }
-  },
-  mixins: [ifLoginMixin]
-};
+    },
+    onLoad() {
+      // 腾讯地图
+      this.qqmapsdk = new QQMapWX({
+        key: '62KBZ-2WXKQ-5GI53-GDT33-LKMPV-34FWO'
+      });
+
+      var scene = this.$root.$mp.appOptions.scene;
+      var fid = this.$root.$mp.query.fid;
+      var userId = this.$root.$mp.query.userId;
+      if (scene == 1007 || scene == 1008) {
+        if (!fid) {
+          //   分享者为分销商
+          this.SAVE_FID_SYNC('');
+          this.SAVE_UID_SYNC(userId);
+        } else {
+          //   分享者为会员
+          this.SAVE_FID_SYNC(fid);
+          this.SAVE_UID_SYNC(userId);
+        }
+      } else {
+        //   清空
+        this.SAVE_FID_SYNC('');
+        this.SAVE_UID_SYNC('')
+      }
+
+    },
+    onShow() {
+      if (!this.sessionId) {
+        wx.hideShareMenu();
+      } else {
+        wx.showShareMenu();
+      }
+      this.get_pageInfo();
+    },
+    computed: {},
+    methods: {
+      ...mapMutations(["SAVE_FID_SYNC", "SAVE_UID_SYNC"]),
+      buy() {
+        var url = "../detail/main?id=3";
+        wx.navigateTo({
+          url
+        });
+      },
+      get_city() {
+        return new Promise((resolve, reject) => {
+          this.qqmapsdk.reverseGeocoder({
+            success(res) {
+              console.log(res);
+              if (res.result.ad_info.city != '天津市') {
+                wx.showModal({
+                  title: '提示',
+                  content: '该商品只限天津市使用'
+                })
+              } else {
+                resolve();
+              }
+            },
+            fail(err) {
+              reject();
+            }
+          })
+
+        })
+
+      },
+      get_pageInfo() {
+        this.$ajax(this.$API + "/Api/Qian/index").then(res => {
+          console.log(res);
+          this.pageInfo = res.data[0];
+          wx.setNavigationBarTitle({
+            title: res.data[0].title1
+          });
+        });
+      },
+    },
+    onShareAppMessage(res) {
+      const _this = this;
+    //   this.get_city().then(() => {
+        var url;
+        if (this.userDetail.status == 1) {
+          url = "/pages/fenxiao/main?userId=" + this.sessionId;
+          console.log(url);
+        } else if (this.userDetail.status == 0) {
+          url = "/pages/fenxiao/main?fid=" + this.userDetail.fid + "&userId=" + this.sessionId;
+          console.log(url);
+        }
+        return {
+          path: url,
+          title: _this.goodsDetail.product_name
+        };
+    //   })
+
+    },
+    mixins: [ifLoginMixin]
+  };
+
 </script>
 
 <style lang='scss'>
-$text-color: "#3A3A3A";
-.banner {
-  margin-bottom: $bot;
-  .img {
-    width: 100%;
-    vertical-align: middle;
-  }
-}
-.tip {
-  padding: 20px 15px;
-  color: $text-color;
-  background: #ffffff;
-  margin-bottom: $bot;
-  .title {
-    font-size: 18px;
-    margin-bottom: 8px;
-  }
-  .content {
-    font-size: 14px;
-    line-height: 22px;
-  }
-}
-.introduce {
-  padding: 20px 15px;
-  color: $text-color;
-  background: #ffffff;
-  margin-bottom: $bot;
-  .img {
-    width: 100%;
-  }
-  .userinfo {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-    .avatar {
-      width: 45px;
-      margin-right: 10px;
-    }
-    .username {
-      font-size: 15px;
-    }
-  }
-  .title {
-    font-size: 18px;
-    margin-bottom: 8px;
-  }
-  .content {
-    font-size: 14px;
-    line-height: 22px;
-    margin-bottom: 12px;
-  }
-  .qrcode {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  $text-color: "#3A3A3A";
+  .banner {
+    margin-bottom: $bot;
     .img {
-      width: 77px;
-      margin-bottom: 14px;
-    }
-    .qrcode-tip {
-      font-size: 14px;
-      line-height: 1;
-      margin-bottom: 12px;
-    }
-    .btn {
-      width: 242px;
-      height: 38px;
-      line-height: 38px;
-      font-size: 14px;
+      width: 100%;
+      vertical-align: middle;
     }
   }
-}
-.btn {
-  background-color: #cb2620;
-  color: #ffffff;
-  margin-bottom: $bot;
-  font-size: 18px;
-}
-// .btn-hover{
-//   background: blue;
-// }
-.intr {
-  padding: 20px 15px;
-  background: #ffffff;
-  .img {
-    width: 100%;
-    height: auto;
-  }
-  .title {
-    font-size: 18px;
-    margin-bottom: 38px;
-  }
-  .media {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+
+  .tip {
+    padding: 20px 15px;
+    color: $text-color;
+    background: #ffffff;
+    margin-bottom: $bot;
+    .title {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
     .content {
       font-size: 14px;
       line-height: 22px;
-      margin-right: 20px;
-    }
-    .img {
-      width: 130px;
-      flex: none;
     }
   }
-  .content {
+
+  .introduce {
+    padding: 20px 15px;
+    color: $text-color;
+    background: #ffffff;
+    margin-bottom: $bot;
     .img {
       width: 100%;
-      margin: 10px 0;
+    }
+    .userinfo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      .avatar {
+        width: 45px;
+        margin-right: 10px;
+      }
+      .username {
+        font-size: 15px;
+      }
+    }
+    .title {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .content {
+      font-size: 14px;
+      line-height: 22px;
+      margin-bottom: 12px;
+    }
+    .qrcode {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .img {
+        width: 77px;
+        margin-bottom: 14px;
+      }
+      .qrcode-tip {
+        font-size: 14px;
+        line-height: 1;
+        margin-bottom: 12px;
+      }
+      .btn {
+        width: 242px;
+        height: 38px;
+        line-height: 38px;
+        font-size: 14px;
+      }
     }
   }
-}
+
+  .btn {
+    background-color: #cb2620;
+    color: #ffffff;
+    margin-bottom: $bot;
+    font-size: 18px;
+  } // .btn-hover{
+  //   background: blue;
+  // }
+  .intr {
+    padding: 20px 15px;
+    background: #ffffff;
+    .img {
+      width: 100%;
+      height: auto;
+    }
+    .title {
+      font-size: 18px;
+      margin-bottom: 38px;
+    }
+    .media {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .content {
+        font-size: 14px;
+        line-height: 22px;
+        margin-right: 20px;
+      }
+      .img {
+        width: 130px;
+        flex: none;
+      }
+    }
+    .content {
+      .img {
+        width: 100%;
+        margin: 10px 0;
+      }
+    }
+  }
+
 </style>

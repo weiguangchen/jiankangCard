@@ -1,7 +1,7 @@
 <template>
   <div class="goods" @click="navigate">
-    <h2 class="title">{{goods.product_name}}<img src="/static/images/index/arrow.png" alt="" class="arrow" mode='widthFix'></h2>
-    <img :src="goods.product_img" mode='widthFix' alt="" class="thumb">
+    <h2 class="title">{{good.product_name}}<img src="/static/images/index/arrow.png" alt="" class="arrow" mode='widthFix'></h2>
+    <img :src="good.product_img" mode='widthFix' alt="" class="thumb">
     <!-- goods.product_img -->
     <!-- <div class="desc">
       <div class="form">
@@ -30,25 +30,16 @@
 export default {
   data() {
     return {
-      goods: {}
     };
   },
-  props: ["navUrl", "goodsId"],
+  props: ["good"],
   created() {
-    // 获取商品
-    wx.request({
-      url:
-        this.$API+"/index.php?g=Api&m=pro&a=get_product",
-      success: res => {
-        console.log(res);
-        this.goods = res.data.data[0];
-      }
-    });
+
   },
   methods: {
     navigate() {
-      console.log(this.goodsId);
-      wx.navigateTo({ url: this.navUrl + "?id=" + this.goodsId });
+      console.log(this.good);
+      wx.navigateTo({ url: "../detail/main?id=" + this.good.id });
     }
   }
 };
@@ -58,6 +49,7 @@ export default {
   flex: 1;
   padding: 20px 15px 15px;
   background: #ffffff;
+  margin-bottom: 20px;
   .title {
     display: flex;
     align-items: center;
