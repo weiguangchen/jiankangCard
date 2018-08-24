@@ -152,7 +152,7 @@
         console.log(this.system_info)
         console.log(this.screenWidth)
         console.log(this.screenHeight)
-        return;
+        // return;
         var _this = this;
         wx.canvasToTempFilePath({
           canvasId: 'tuiguang',
@@ -276,8 +276,8 @@
         text-align: center;
         font-size: 14px;
         .img {
-          width: 75px;
-          height: 75px;
+          width: 120px;
+          height: 120px;
         }
       }
       .userinfo {
