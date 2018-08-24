@@ -79,7 +79,7 @@ export default {
     save_ad() {
       var _this = this;
       // 表单验证
-      if (!_this.username || _this.username.length < 3) {
+      if (!_this.username || _this.username.length < 2) {
         wx.showToast({
           title: "填写正确用户名",
           icon: "none",

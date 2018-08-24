@@ -32,6 +32,12 @@ const mutations = {
     SAVE_UID_SYNC(state,preload){
         state.shareUserId = preload;
     },
+    SAVE_USTATUS_SYNC(state,preload){
+        state.shareStatus = preload;
+    },
+    SAVE_SHAREINFO(state,preload){
+        state.shareInfo = preload;
+    },
     // CLEAR_FID_SYNC(state,preload){
     //     state.fid = 0;
     // },

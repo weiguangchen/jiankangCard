@@ -101,10 +101,16 @@
         // 使用默认地址
         this.get_mr_ad();
       }
+
+
+
     },
     computed: {
       ...mapState(["userDetail", "user_ad"]),
       ...mapGetters(["ifBangding"]),
+      currentCity() {
+        return this.ad ? this.ad.three.split(',')[0] : "";
+      },
       ifHasAd() {
         return this.ad ? true : false;
 
@@ -144,6 +150,15 @@
       submitOrder() {
         var _this = this;
 
+        if (this.ifHasAd) {
+          if (this.currentCity != '天津市' && this.goodsId == 22) {
+            wx.showModal({
+              title: '提示',
+              content: '该商品只能在天津地区使用！'
+            })
+            return;
+          }
+        }
         if (this.ifBangding) {
           console.log("绑定了");
           if (this.ifHasAd) {
@@ -151,7 +166,7 @@
               "../pay/main?price=" +
               this.goodsDetail.product_price +
               "&addressId=" +
-              this.ad.id+"&goodsId="+this.goodsId;
+              this.ad.id + "&goodsId=" + this.goodsId;
             console.log("跳转支付url：" + url);
             wx.navigateTo({
               url
@@ -193,7 +208,14 @@
         }).then(({
           data
         }) => {
-          this.ad = data[0];
+          console.log(this.ad);
+          if (this.ad.log == 0) {
+            // 没有默认地址
+            this.ad = '';
+          } else {
+            // 有默认地址
+            this.ad = data[0];
+          }
         })
       },
     },

@@ -53,12 +53,7 @@ export default {
     },
     tixian() {
       var _this = this;
-      // console.log('money:'+this.money)
-      // console.log('可提现金额:'+this.yj)
-      // console.log(typeof this.money)
-      // console.log(typeof this.yj)
-      // console.log(parseInt(this.money) < parseInt(this.yj))
-      if (parseInt(this.money) < parseInt(this.yj)) {
+      if (parseFloat(this.money) <= parseFloat(this.yj)) {
         // 余额大于提现金额，可以提现
         this.$ajax(this.$API+"/Api/YjShow/yj_yue", {
           uid: _this.sessionId,

@@ -54,7 +54,7 @@ export default {
     tixian() {
       var _this = this;
 
-      if (this.money < this.userDetail.money) {
+      if (parseFloat(this.money) <parseFloat(this.userDetail.money)) {
         // 余额大于提现金额，可以提现
         this.queren = true;
       } else {

@@ -47,9 +47,12 @@ export default {
 <style lang="scss">
 .goods {
   flex: 1;
-  padding: 20px 15px 15px;
+  padding: 20px 0 0 0;
   background: #ffffff;
   margin-bottom: 20px;
+  h2{
+    padding: 0 15px;
+  }
   .title {
     display: flex;
     align-items: center;
@@ -65,7 +68,6 @@ export default {
   }
   .thumb {
     width: 100%;
-    margin: 44px 5px 0;
   }
   .desc {
     font-size: 14px;

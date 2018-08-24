@@ -8,7 +8,8 @@
         <h2 class="title">温馨提示 : </h2>
         <p class="content">{{pageInfo.product_content}}</p>
       </div>
-      <button class="btn" type="warn" @click='buy'>分享</button>
+      <!-- <button class="btn" type="warn" @click='buy'>分享</button> -->
+      <button class="btn" type="warn" open-type='share'>分享</button>
     </template>
     <div class="introduce" v-else>
       <div class="userinfo">
@@ -46,7 +47,7 @@
     mapActions
   } from "vuex";
   import ifLoginMixin from "@/mixin/ifLoginMixin";
-  import QQMapWX from '../../../static/js/qqmap-wx-jssdk.min.js'
+  //   import QQMapWX from '../../../static/js/qqmap-wx-jssdk.min.js'
   export default {
     data() {
       return {
@@ -55,95 +56,92 @@
     },
     onLoad() {
       // 腾讯地图
-      this.qqmapsdk = new QQMapWX({
-        key: '62KBZ-2WXKQ-5GI53-GDT33-LKMPV-34FWO'
-      });
+      //   this.qqmapsdk = new QQMapWX({
+      //     key: '62KBZ-2WXKQ-5GI53-GDT33-LKMPV-34FWO'
+      //   });
+      this.shareMenu();
 
       var scene = this.$root.$mp.appOptions.scene;
       var fid = this.$root.$mp.query.fid;
       var userId = this.$root.$mp.query.userId;
+      var status = this.$root.$mp.query.status;
+      var obj = {
+        fid,
+        userId,
+        status
+      }
       if (scene == 1007 || scene == 1008) {
-        if (!fid) {
-          //   分享者为分销商
-          this.SAVE_FID_SYNC('');
-          this.SAVE_UID_SYNC(userId);
-        } else {
-          //   分享者为会员
-          this.SAVE_FID_SYNC(fid);
-          this.SAVE_UID_SYNC(userId);
-        }
+        this.SAVE_SHAREINFO(obj);
       } else {
         //   清空
-        this.SAVE_FID_SYNC('');
-        this.SAVE_UID_SYNC('')
+        this.SAVE_SHAREINFO('');
       }
+
 
     },
     onShow() {
-      if (!this.sessionId) {
-        wx.hideShareMenu();
-      } else {
-        wx.showShareMenu();
-      }
+      this.shareMenu();
       this.get_pageInfo();
     },
     computed: {},
     methods: {
-      ...mapMutations(["SAVE_FID_SYNC", "SAVE_UID_SYNC"]),
+      ...mapMutations(["SAVE_FID_SYNC", "SAVE_UID_SYNC", "SAVE_USTATUS_SYNC", "SAVE_SHAREINFO"]),
+      shareMenu() {
+        if (!this.sessionId) {
+          wx.hideShareMenu();
+        } else {
+          wx.showShareMenu();
+        }
+      },
       buy() {
-        var url = "../detail/main?id=3";
+        var url = "../index/main";
+
         wx.navigateTo({
           url
         });
       },
-      get_city() {
-        return new Promise((resolve, reject) => {
-          this.qqmapsdk.reverseGeocoder({
-            success(res) {
-              console.log(res);
-              if (res.result.ad_info.city != '天津市') {
-                wx.showModal({
-                  title: '提示',
-                  content: '该商品只限天津市使用'
-                })
-              } else {
-                resolve();
-              }
-            },
-            fail(err) {
-              reject();
-            }
-          })
+      //   get_city() {
+      //     return new Promise((resolve, reject) => {
+      //       this.qqmapsdk.reverseGeocoder({
+      //         success(res) {
+      //           console.log(res);
+      //           if (res.result.ad_info.city != '天津市') {
+      //             wx.showModal({
+      //               title: '提示',
+      //               content: '该商品只限天津市使用'
+      //             })
+      //           } else {
+      //             resolve();
+      //           }
+      //         },
+      //         fail(err) {
+      //           reject();
+      //         }
+      //       })
 
-        })
+      //     })
 
-      },
+      //   },
       get_pageInfo() {
         this.$ajax(this.$API + "/Api/Qian/index").then(res => {
           console.log(res);
           this.pageInfo = res.data[0];
-          wx.setNavigationBarTitle({
-            title: res.data[0].title1
-          });
+
         });
       },
     },
+
     onShareAppMessage(res) {
       const _this = this;
-    //   this.get_city().then(() => {
-        var url;
-        if (this.userDetail.status == 1) {
-          url = "/pages/fenxiao/main?userId=" + this.sessionId;
-          console.log(url);
-        } else if (this.userDetail.status == 0) {
-          url = "/pages/fenxiao/main?fid=" + this.userDetail.fid + "&userId=" + this.sessionId;
-          console.log(url);
-        }
-        return {
-          path: url,
-          title: _this.goodsDetail.product_name
-        };
-    //   })
+      //   this.get_city().then(() => {
+      var url = "/pages/fenxiao/main?fid=" + this.userDetail.fid + "&userId=" + this.sessionId + "&status=" + this.userDetail
+        .status;
+      console.log(url);
+      return {
+        path: url,
+        //   title: _this.goodsDetail.product_name
+      };
+      //   })
 
     },
     mixins: [ifLoginMixin]

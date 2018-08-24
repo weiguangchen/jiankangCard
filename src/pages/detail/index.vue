@@ -22,7 +22,7 @@
         <img src="/static/images/detail/logo.png" alt="" mode='widthFix' class="logo">
         <div class="title">
           <span class="name">{{goodsDetail.product_name}}</span>
-          <span class="rhfx">如何分销</span>
+          <span class="rhfx" @click="toShare">如何分销</span>
         </div>
       </div>
       <div class="introduce">
@@ -83,20 +83,17 @@
       var scene = this.$root.$mp.appOptions.scene;
       var fid = this.$root.$mp.query.fid;
       var userId = this.$root.$mp.query.userId;
+      var status = this.$root.$mp.query.status;
+      var obj = {
+        fid,
+        userId,
+        status
+      }
       if (scene == 1007 || scene == 1008) {
-        if (!fid) {
-          //   分享者为分销商
-          this.SAVE_FID_SYNC('');
-          this.SAVE_UID_SYNC(userId);
-        } else {
-          //   分享者为会员
-          this.SAVE_FID_SYNC(fid);
-          this.SAVE_UID_SYNC(userId);
-        }
+        this.SAVE_SHAREINFO(obj);
       } else {
         //   清空
-        this.SAVE_FID_SYNC('');
-        this.SAVE_UID_SYNC('')
+        this.SAVE_SHAREINFO('');
       }
 
       // 腾讯地图
@@ -120,7 +117,7 @@
 
     },
     methods: {
-      ...mapMutations(["SET_PREGOODSID_SYNC","SAVE_FID_SYNC","SAVE_UID_SYNC"]),
+      ...mapMutations(["SET_PREGOODSID_SYNC", "SAVE_FID_SYNC", "SAVE_UID_SYNC", "SAVE_SHAREINFO"]),
       // sessionIdIfTimeOut(fn) {
       //   wx.showLoading();
       //   var _this = this;
@@ -137,6 +134,12 @@
       //     }
       //   });
       // },
+      toShare() {
+        var url = '../fenxiao/main';
+        wx.switchTab({
+          url
+        });
+      },
       notfx() {
         var url = "../fenxiao/main";
         wx.switchTab({
@@ -146,11 +149,11 @@
       buy() {
         var url = "../me/main";
         // this.get_city().then(() => {
-          // id可用
-          var url = "../order/main" + "?id=" + this.goodsDetail.id;
-          wx.navigateTo({
-            url
-          });
+        // id可用
+        var url = "../order/main" + "?id=" + this.goodsDetail.id;
+        wx.navigateTo({
+          url
+        });
         // })
 
 
@@ -193,12 +196,8 @@
     },
     onShareAppMessage(res) {
       const _this = this;
-      var url;
-      if (this.userDetail.status == 1) {
-        url = "/pages/fenxiao/main?userId=" + this.sessionId;
-      } else if (this.userDetail.status == 0) {
-        url = "/pages/fenxiao/main?fid=" + this.userDetail.fid + "&userId=" + this.sessionId;
-      }
+      var url = "/pages/fenxiao/main?fid=" + this.userDetail.fid + "&userId=" + this.sessionId + "&status=" + this.userDetail
+        .status;
       console.log(url);
       return {
         path: url,
@@ -227,9 +226,10 @@
   }
 
   .intr {
-    padding-left: 14px;
     background: #ffffff;
     .title-wrap {
+    padding-left: 14px;
+
       padding-top: 6px;
       .logo {
         width: 55px;
@@ -255,7 +255,6 @@
       }
     }
     .introduce {
-      padding-right: 15px;
       font-size: 14px;
       color: #000000;
       line-height: 26px;

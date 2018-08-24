@@ -13,7 +13,12 @@
 <script>
   import goods from "@/components/index-goods/goods";
   import ifLoginMixin from "@/mixin/ifLoginMixin";
-
+  import {
+    mapState,
+    mapGetters,
+    mapMutations,
+    mapActions
+  } from "vuex";
   export default {
     data() {
       return {
@@ -30,6 +35,7 @@
     },
 
     methods: {
+      ...mapMutations(["SAVE_FID_SYNC", "SAVE_UID_SYNC","SAVE_SHAREINFO"]),
       get_pro() {
         // 获取商品
 
@@ -63,6 +69,22 @@
     },
     onLoad() {
       var _this = this;
+
+      var scene = this.$root.$mp.appOptions.scene;
+      var fid = this.$root.$mp.query.fid;
+      var userId = this.$root.$mp.query.userId;
+      var status = this.$root.$mp.query.status;
+      var obj = {
+        fid,
+        userId,
+        status
+      }
+      if (scene == 1007 || scene == 1008) {
+        this.SAVE_SHAREINFO(obj);
+      } else {
+        //   清空
+        this.SAVE_SHAREINFO('');
+      }
       // 动态获取title
       this.get_title();
       this.get_pro();
@@ -75,10 +97,10 @@
       // 来自页面内转发按钮
       var url;
       if (this.userDetail.status == 1) {
-        url = "/pages/fenxiao/main?fid=" + this.sessionId;
+        url = "/pages/fenxiao/main?fid=" + this.userDetail.fid;
         console.log(url);
       } else if (this.userDetail.status == 0) {
-        url = "/pages/fenxiao/main?fid=" + this.userDetail.fid;
+        url = "/pages/fenxiao/main?fid=" + this.userDetail.fid + "&userId=" + this.sessionId;
         console.log(url);
       }
       console.log(url)
@@ -119,10 +141,12 @@
   }
 
   .goodslist {
-    flex: 1;
-    display: flex;
+    // flex: 1;
+    // display: flex;
     flex-direction: column;
     margin-bottom: $bot;
+    background:#eeeeee;
+
 
   }
 

@@ -94,26 +94,29 @@
       };
     },
     onLoad() {
+      
+      console.log(this.shareInfo);
 
+      // var scene = this.$root.$mp.appOptions.scene;
+      // var fid = this.$root.$mp.query.fid;
+      // var userId = this.$root.$mp.query.userId;
+      // if (!this.shareFid || !this.shareUserId) {
+      //   if (scene == 1007 || scene == 1008) {
+      //     console.log(userId)
+      //     console.log(fid)
 
-      var scene = this.$root.$mp.appOptions.scene;
-      var fid = this.$root.$mp.query.fid;
-      var userId = this.$root.$mp.query.userId;
-      if (scene == 1007 || scene == 1008) {
-        if (!fid) {
-          //   分享者为分销商
-          this.SAVE_FID_SYNC('');
-          this.SAVE_UID_SYNC(userId);
-        } else {
-          //   分享者为会员
-          this.SAVE_FID_SYNC(fid);
-          this.SAVE_UID_SYNC(userId);
-        }
-      } else {
-        //   清空
-        this.SAVE_FID_SYNC('');
-        this.SAVE_UID_SYNC('')
-      }
+      //     if (!userId) {
+      //       //   分享者为分销商
+      //       this.SAVE_FID_SYNC(fid);
+      //       this.SAVE_UID_SYNC('');
+      //     } else {
+      //       //   分享者为会员
+      //       this.SAVE_FID_SYNC(fid);
+      //       this.SAVE_UID_SYNC(userId);
+      //     }
+      //   }
+
+      // }
 
     },
     onShow() {
@@ -127,7 +130,7 @@
       }
     },
     computed: {
-      ...mapState(["shareFid", "shareUserId", "pre_goodsId"]),
+      ...mapState(["shareFid", "shareUserId", "shareInfo", "pre_goodsId"]),
       ...mapGetters(["ifLogin"]),
       fenxiaoshang() {
         return this.ifFenxiaoshang ? "分销商" : "普通会员";
@@ -165,15 +168,27 @@
                 console.log(res);
                 if (res.code) {
                   // 用户登录
+                  var data = {
+                    code: res.code,
+                    encryptedData,
+                    iv,
+                  };
+                  if (_this.shareInfo.status == 1) {
+                    // 分享者为分销商
+                    Object.assign(data,{
+                      fid:_this.shareInfo.userId,
+                      user_id:''
+                    })
+                  } else {
+                    // 分享者为会员
+                    Object.assign(data,{
+                      fid:_this.shareInfo.fid,
+                      user_id:_this.shareInfo.userId
+                    })
+                  }
                   wx.request({
                     url: this.$API + "/index.php?g=Api&m=GetUser&a=get_sk",
-                    data: {
-                      code: res.code,
-                      encryptedData,
-                      iv,
-                      fid: _this.shareFid,
-                      user_id: _this.shareUserId
-                    },
+                    data,
                     success: res => {
                       console.log(res);
                       // 登陆成功
@@ -232,7 +247,7 @@
           url
         });
       },
-      tuiguang(){
+      tuiguang() {
         var url = "../tuiguang/main";
         wx.navigateTo({
           url
@@ -253,26 +268,22 @@
     components: {
       myModal
     },
-    onShareAppMessage(res) {
-      const _this = this;
-      // if (res.from === "button") {
-      //   console.log("转发");
-      //   console.log(this.userDetail);
-      // 来自页面内转发按钮
-      var url;
-      if (this.userDetail.status == 1) {
-        url = "/pages/fenxiao/main?userId=" + this.sessionId;
-        console.log(url);
-      } else if (this.userDetail.status == 0) {
-        url = "/pages/fenxiao/main?fid=" + this.userDetail.fid + "&userId=" + this.sessionId;
-        console.log(url);
-      }
-      return {
-        path: url,
-        title: _this.goods.product_name
-      };
-      // }
-    },
+    // onShareAppMessage(res) {
+    // const _this = this;
+
+    // var url;
+    // if (this.userDetail.status == 1) {
+    //   url = "/pages/fenxiao/main?fid=" + this.userDetail.fid;
+    //   console.log(url);
+    // } else if (this.userDetail.status == 0) {
+    //   url = "/pages/fenxiao/main?fid=" + this.userDetail.fid + "&userId=" + this.sessionId;
+    //   console.log(url);
+    // }
+    // return {
+    //   path: url,
+    //   title: _this.goods.product_name
+    // };
+    // },
     mixins: [ifLoginMixin]
   };
 
