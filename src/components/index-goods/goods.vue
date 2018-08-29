@@ -57,7 +57,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 18px;
+    font-size: 22px;
     color: #3a3a3a;
     font-weight: bold;
     margin-bottom: 20px;

@@ -59,7 +59,7 @@ export default {
             _this.yzming = false;
           }
         });
-      } else if (!this.phone || !/^1[3|4|5|8][0-9]\d{4,8}$/.test(_this.phone)) {
+      } else if (!this.phone || !/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(_this.phone)) {
         wx.showModal({
           title: "提示",
           showCancel: false,
