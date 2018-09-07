@@ -90,7 +90,7 @@ export default {
         });
       } else if (
         !_this.phone ||
-        !/^1[3|4|5|8][0-9]\d{4,8}$/.test(_this.phone)
+        !/^1[3|4|5|6|7|8][0-9]\d{4,8}$/.test(_this.phone)
       ) {
         wx.showToast({
           title: "请填写正确手机号",

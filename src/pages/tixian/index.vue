@@ -33,6 +33,8 @@ export default {
       queren: false
     };
   },
+  onLoad(){
+  },
   components: {
     myModal,
     qrModal
@@ -96,6 +98,7 @@ export default {
   },
   onUnload() {
     this.money = "";
+    this.queren = false;
   },
   onShow() {},
   mixins: [ifLoginMixin]
