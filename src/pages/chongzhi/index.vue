@@ -36,11 +36,11 @@ export default {
     replaceInput(e) {
       console.log(e.mp.detail);
       var val = e.mp.detail.value;
-      // if (val != "") {
-      //   if (val < 1) {
-      //     this.money = 1;
-      //   }
-      // }
+      if (val != "") {
+        if (val < 1) {
+          this.money = 1;
+        }
+      }
     },
     chongzhi() {
       var _this = this;
