@@ -36,11 +36,11 @@ export default {
     replaceInput(e) {
       console.log(e.mp.detail);
       var val = e.mp.detail.value;
-      if (val != "") {
-        if (val < 1) {
-          this.money = 1;
-        }
-      }
+      // if (val != "") {
+      //   if (val < 1) {
+      //     this.money = 1;
+      //   }
+      // }
     },
     chongzhi() {
       var _this = this;
@@ -89,7 +89,7 @@ export default {
               //   充值成功
               console.log(res);
               wx.request({
-                url: this.$API+"/api/WxPay/chongzhi_ok",
+                url: _this.$API+"/api/WxPay/chongzhi_ok",
                 data: {
                   uid: _this.sessionId,
                   pay_order_id: pay_order_id
