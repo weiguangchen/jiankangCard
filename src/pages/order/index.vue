@@ -29,7 +29,7 @@
     <div class="goods-info">
       <div class="title">
         <span class="txt">商品信息：</span>
-        <span class="goods">{{goodsDetail.product_name}}/1张</span>
+        <span class="goods">{{goodsDetail.product_name}}</span>
       </div>
       <div class="content">
         <img :src="goodsDetail.product_img" alt="" class="img" mode='aspectFit' @click="previewImg">
@@ -45,16 +45,26 @@
     <div class="order">
       <div class="title">
         <span class="tit">订单结算</span>
-        <span class="price">{{goodsDetail.product_price}}</span>
+        <span class="price">{{goodsDetail.product_price * count}}元</span>
       </div>
       <div class="order-list">
         <div class="order-item">
           <span>商品价格</span>
           <span>￥{{goodsDetail.product_price}}</span>
         </div>
-        <div class="order-item">
+        <!-- <div class="order-item">
           <span>运费总额</span>
           <span>免费</span>
+        </div> -->
+        <div class="order-item">
+          <span>数量</span>
+          <span>
+            <div class="number">
+              <button @click="minus" :disabled='disminus'>-</button>
+              <div class="num">{{count}}</div>
+              <button @click="plus">+</button>
+            </div>
+          </span>
         </div>
       </div>
     </div>
@@ -80,7 +90,8 @@
         goodsId: "",
         goodsDetail: {},
         ad: '',
-        showMyModal: false
+        showMyModal: false,
+        count: 1
       };
     },
     onLoad() {
@@ -114,6 +125,9 @@
       ifHasAd() {
         return this.ad ? true : false;
 
+      },
+      disminus(){
+        return this.count <=1 ? true:false;
       },
     },
     components: {
@@ -166,7 +180,7 @@
               "../pay/main?price=" +
               this.goodsDetail.product_price +
               "&addressId=" +
-              this.ad.id + "&goodsId=" + this.goodsId;
+              this.ad.id + "&goodsId=" + this.goodsId+"&count="+this.count;
             console.log("跳转支付url：" + url);
             wx.navigateTo({
               url
@@ -218,6 +232,12 @@
           }
         })
       },
+      plus() {
+        this.count += 1;
+      },
+      minus() {
+        this.count -= 1;
+      },
     },
 
     mixins: [ifLoginMixin]
@@ -227,6 +247,7 @@
 
 <style lang='scss'>
   $paddingleft: 15px;
+
   .app-bg {
     padding-top: $bot;
   }
@@ -238,37 +259,45 @@
     padding: 19px $paddingleft 0;
     box-sizing: border-box;
     margin-bottom: $bot;
+
     .add-newAd {
       flex: none;
       width: 100%;
       height: 55px;
       line-height: 55px;
     }
+
     .info {
       // width: 264px;
       flex: 1;
+
       .title {
         font-size: 17px;
         color: #363636;
         margin-bottom: 15px;
       }
+
       .detail {
         font-size: 13px;
         color: #545454;
+
         .person {
           margin-bottom: 10px;
+
           .name {
             margin-right: 16px;
           }
         }
       }
     }
+
     .btn {
       position: absolute;
       top: 18px;
       right: 6px;
       flex: 1;
       font-size: 11px;
+
       .changeAdd {
         display: flex;
         justify-content: center;
@@ -290,6 +319,7 @@
     background: #ffffff;
     padding-left: $paddingleft;
     margin-bottom: $bot;
+
     .title {
       display: flex;
       align-items: center;
@@ -297,29 +327,36 @@
       height: 55px;
       font-size: 17px;
       color: #373737;
+
       .txt {
         flex: none;
       }
+
       .goods {
         font-size: 15px;
       }
     }
+
     .content {
       padding: 18px 0;
       display: flex;
+
       .img {
         width: 111px;
         height: 72px;
       }
+
       .info {
         display: flex;
         flex-direction: column;
         padding: 0 10px 0 6px;
         font-size: 14px;
         color: #363636;
+
         .intr {
           flex: auto;
         }
+
         .price {
           .num {
             color: #cd2620;
@@ -332,6 +369,7 @@
   .order {
     background: #ffffff;
     padding-left: $paddingleft;
+
     .title {
       display: flex;
       align-items: center;
@@ -340,15 +378,20 @@
       height: 55px;
       border-bottom: 1px solid #cccccc;
       padding-right: 15px;
+
       .tit {
         font-size: 16px;
       }
+
       .price {
         font-size: 18px;
         color: #cd2620;
       }
     }
+
     .order-list {
+      padding-bottom: 10px;
+
       .order-item {
         padding-right: 15px;
         display: flex;
@@ -357,6 +400,24 @@
         height: 31px;
         font-size: 14px;
         color: #373737;
+
+        .number {
+          display: flex;
+          height: 30px;
+
+          .num,
+          button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            flex: none;
+          }
+
+          button {
+            padding: 0;
+          }
+        }
       }
     }
   }
