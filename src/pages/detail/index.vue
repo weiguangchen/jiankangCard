@@ -75,7 +75,8 @@
     data() {
       return {
         goodsDetail: {},
-        goodsId: ""
+        goodsId: "",
+        pageInfo: ''
       };
     },
     onLoad() {
@@ -104,7 +105,7 @@
       // console.log('腾讯地图')
       // console.log(this.qqmapsdk)
       this.get_goods();
-
+      this.get_pageInfo();
     },
     onShow() {
       if (!this.sessionId) {
@@ -134,6 +135,13 @@
       //     }
       //   });
       // },
+      get_pageInfo() {
+        this.$ajax(this.$API + "/Api/Qian/index").then(res => {
+          console.log(res);
+          this.pageInfo = res.data[0];
+
+        });
+      },
       toShare() {
         var url = '../fenxiao/main';
         wx.switchTab({
@@ -201,7 +209,8 @@
       console.log(url);
       return {
         path: url,
-        title: _this.goodsDetail.product_name
+        title: _this.goodsDetail.product_name,
+        imageUrl: this.pageInfo.shareimg
       };
     },
 
@@ -227,14 +236,17 @@
 
   .intr {
     background: #ffffff;
+
     .title-wrap {
-    padding-left: 14px;
+      padding-left: 14px;
 
       padding-top: 6px;
+
       .logo {
         width: 55px;
         margin-bottom: 8px;
       }
+
       .title {
         display: flex;
         justify-content: space-between;
@@ -242,11 +254,13 @@
         padding-right: 16px;
         border-bottom: 1px solid #cccccc;
         margin-bottom: 14px;
+
         .name {
           font-size: 22px;
           color: #3c3c3c;
           line-height: 1;
         }
+
         .rhfx {
           flex: none;
           font-size: 14px;
@@ -254,10 +268,12 @@
         }
       }
     }
+
     .introduce {
       font-size: 14px;
       color: #000000;
       line-height: 26px;
+
       .form {
         .form-item {
           display: flex;
@@ -265,12 +281,14 @@
           align-items: center;
         }
       }
+
       .content {
         .img {
           width: 100%;
           margin: 10px 0;
         }
       }
+
       .img {
         width: 100%;
       }
@@ -286,6 +304,7 @@
     font-size: 16px;
     color: #ffffff;
     display: flex;
+
     .fx-btn,
     .buy-btn {
       border-radius: 0;
@@ -294,13 +313,16 @@
       align-items: center;
       justify-content: center;
     }
+
     .fx-btn {
       background: #fd9939;
       width: 130px;
     }
+
     .buy-btn {
       flex: 1;
       background: #cb2620;
+
       .price {
         margin-left: 18px;
         font-size: 26px;

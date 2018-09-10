@@ -139,7 +139,8 @@
       console.log(url);
       return {
         path: url,
-        //   title: _this.goodsDetail.product_name
+        //   title: _this.goodsDetail.product_name,
+        imageUrl:this.pageInfo.shareimg
       };
       //   })
 

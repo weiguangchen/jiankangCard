@@ -65,7 +65,8 @@
           console.log(res);
           this.pageInfo = res.data[0];
         });
-      }
+      },
+      
     },
     onLoad() {
       var _this = this;
@@ -106,7 +107,8 @@
       console.log(url)
       return {
         path: url,
-        title: _this.goods.product_name
+        title: _this.goods.product_name,
+        imageUrl:this.pageInfo.shareimg
       };
       // }
     },
